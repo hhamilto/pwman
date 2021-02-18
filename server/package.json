@@ -7,5 +7,12 @@
     "test": "'"
   },
   "author": "Hurricane Hamilton",
-  "license": "GPL"
+  "license": "GPL",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "express": "^4.17.1",
+    "luxon": "^1.26.0",
+    "mysql": "^2.18.1",
+    "uuid": "^8.3.2"
+  }
 }
