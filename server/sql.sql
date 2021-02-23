@@ -23,8 +23,6 @@ create table devices(
    PRIMARY KEY ( id )
 );
 
-
-# TODO TEST FOLLOWING:
 create table secure_items (
    id INT NOT NULL AUTO_INCREMENT,
    public_id VARCHAR(100) NOT NULL,

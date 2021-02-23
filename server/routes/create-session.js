@@ -7,6 +7,7 @@ const { v4: uuid } = require('uuid');
 
 module.exports = (req, res) => {
 	if (!req.body.deviceSecret) {
+		logger.debug('missing deviceSecret')
 		res.status(400).json({
 			error: 'Please specify a deviceSecret key in the body'
 		})
@@ -22,12 +23,12 @@ module.exports = (req, res) => {
 		}
 		const hash = results[0].secret
 		const deviceId = results[0].id
-		bcrypt.compare(req.body.deviceSecret, hash, function(err, doesPasswordMatch) {
+		bcrypt.compare(req.body.deviceSecret, hash, function(err, doesSecretMatch) {
 			if (err) {
-				logger.error('Could not create user: could not compare password: ' + err.message)
+				logger.error('Could not create session: could not compare password: ' + err.message)
 				return res.status(500).json({'error': 'internal server error'})
 			}
-			if (!doesPasswordMatch) {
+			if (!doesSecretMatch) {
 				return res.status(401).json({'error': 'incorrect device secret'})
 			}
 			// Note: generate a session token
@@ -51,6 +52,6 @@ module.exports = (req, res) => {
 					})
 				})
 			});
-		});
+		})
 	})
 }

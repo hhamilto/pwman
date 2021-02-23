@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link href="css.css" rel="stylesheet">
+</head>
+<body>
+	<div id="login" class="hidden screen">
+		<form>
+			username:
+			<input class="username"/>
+			password:
+			<input class="password" type='password'/>
+			<button type='submit'>Login</button>
+		</form>
+	</div>
+	<div id="main-menu" class="hidden screen">
+		<button class="add-item">Add Item</button>
+		<button class="logout">Logout</button>
+	</div>
+	<div id="add-item" class="hidden screen">
+		<form>
+			username:
+			<input type="text" class="username"/>
+			password:
+			<input type="text" class="password"/>
+			website:
+			<input type="text" class="website"/>
+			<button class="add-item">Add Item</button>
+		</form>
+	</div>
+	<script src="vendor/luxon.js"></script>
+	<script src="js.js"></script>
+</body>
+</html>

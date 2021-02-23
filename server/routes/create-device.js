@@ -56,16 +56,20 @@ module.exports = (req, res) => {
 						logger.error('Could not create device: could not hash secret: ' + err.message)
 						return res.status(500).json({'error': 'internal server error'})
 					}
-					db.query('INSERT INTO devices (user_id, public_id, secret, description) VALUES (?, ?, ?, ?)', [userId, deviceId, deviceSecretHash, req.body.deviceDescription], function (err, results, fields) {
-						if (err) {
-							logger.error('Could not create device: could not insert: ' + err.message)
-							return res.status(500).json({'error': 'internal server error'})
+					db.query(
+						'INSERT INTO devices (user_id, public_id, secret, description) VALUES (?, ?, ?, ?)',
+						[userId, deviceId, deviceSecretHash, JSON.stringify(req.body.deviceDescription)],
+						function (err, results, fields) {
+							if (err) {
+								logger.error('Could not create device: could not insert: ' + err.message)
+								return res.status(500).json({'error': 'internal server error'})
+							}
+							res.status(201).json({
+								deviceId,
+								deviceSecret
+							})
 						}
-						res.status(201).json({
-							deviceId,
-							deviceSecret
-						})
-					});
+					);
 				});
 			});
 		});
