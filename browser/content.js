@@ -5,8 +5,10 @@
 // myPort.postMessage({greeting: "hello from content script"});
 
 const userNameSelectors = [
-	'input[type="email"]',
-	'input[placeholder*="email"] i'
+	'input[type="email" i]',
+	'input[placeholder*="email" i]',
+	'input[placeholder*="User ID" i]',
+	'input[id*="userid" i]'
 ]
 
 const passwordSelectors = [
@@ -37,6 +39,32 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 					return;
 				}
 			}
+		}
+	} else if (message.action == 'fill item') {
+		console.log('wtg')
+		console.log('message', message)
+		// todo -- store selectors too?
+		let usernameEl;
+		for (let i = 0; i < userNameSelectors.length; i++) {
+			usernameEl = document.querySelector(userNameSelectors[i])
+			if (usernameEl) {
+				break
+			}
+		}
+		if (usernameEl) {
+			usernameEl.value = message.item.username
+		}
+
+		let passwordEl
+		for (let i = 0; i < passwordSelectors.length; i++) {
+			passwordEl = document.querySelector(passwordSelectors[i])
+			if (passwordEl) {
+				break
+			}
+		}
+		console.log("passwordEl?")
+		if (passwordEl) {
+			passwordEl.value = message.item.password
 		}
 	} else {
 		console.log('unrecognized action', m)

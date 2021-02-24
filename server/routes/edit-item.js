@@ -10,16 +10,18 @@ module.exports = (req, res) => {
 		})
 		return;
 	}
-	const publicId = uuid()
+	console.log("edit item:")
+	console.log([req.params.itemId, JSON.stringify(req.body.item), res.locals.user.id],)
 	db.query(
-		'INSERT INTO secure_items (public_id, item, owning_user_id) VALUES (?, ?, ?)',
-		[publicId, JSON.stringify(req.body.item), res.locals.user.id],
+		`UPDATE secure_items SET item = ? WHERE public_id = ? AND owning_user_id = ?`,
+		[JSON.stringify(req.body.item), req.params.itemId, res.locals.user.id],
 		function (err, results) {
 			if (err) {
-				logger.error('Could not create user: could not insert: ' + err.message)
+				logger.error('Could not update item: could not update: ' + err.message)
 				return res.status(500).json({'error': 'internal server error'})
 			}
-			res.status(201).json({success:true})
+			console.log('results', results)
+			res.status(200).json({success:true})
 		}
 	);
 }

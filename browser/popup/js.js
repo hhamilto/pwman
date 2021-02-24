@@ -28,7 +28,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				action: "fetch username"
 			}
 		)
-		document.querySelector('#add-item .username').value = username
+		if (username) {
+			document.querySelector('#add-item .username').value = username
+		}
 
 		const password = await browser.tabs.sendMessage(
 			currentTab.id,
@@ -36,9 +38,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				action: "fetch password"
 			}
 		)
-		document.querySelector('#add-item .password').value = password
+		if (password) {
+			document.querySelector('#add-item .password').value = password
+		}
 	}
+
 	const fetchItems = async () => {
+		const [currentTab] = await browser.tabs.query({
+			currentWindow: true,
+			active: true
+		});
 		const url = await browser.tabs.sendMessage(
 			currentTab.id,
 			{
@@ -54,22 +63,60 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				"Authorization": "Bearer "+token
 			}
 		});
-		const tokenInfo = await respRaw.json();
+		const parsedResp = await respRaw.json();
+		console.log(parsedResp)
+		return parsedResp.items
 	}
 
-	const showScreen = (id) => {
+	const fillItem = async (item) => {
+		const [currentTab] = await browser.tabs.query({
+			currentWindow: true,
+			active: true
+		});
+		const url = await browser.tabs.sendMessage(
+			currentTab.id,
+			{
+				action: "fill item",
+				item
+			}
+		)
+	}
+
+	const renderItems = (items) => {
+		const currentItemsULEL = document.querySelector('#main-menu .current-items')
+		currentItemsULEL.innerHTML = '';
+		var itemTemplate = document.querySelector('#item-row');
+		items.forEach(i => {
+			const liEl = itemTemplate.content.cloneNode(true)
+			liEl.querySelector(".website").textContent = i.item.website;
+			liEl.querySelector(".username").textContent = i.item.username;
+			liEl.querySelector("button.fill").addEventListener('click', (e) => {
+				e.preventDefault();
+				fillItem(i.item)
+			})
+			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
+				e.preventDefault();
+				await showScreen('edit-item')
+				document.querySelector('#edit-item .website').value = i.item.website
+				document.querySelector('#edit-item .username').value = i.item.username
+				document.querySelector('#edit-item .password').value = i.item.password
+				document.querySelector('#edit-item .item-id').value = i.id
+			})
+			currentItemsULEL.appendChild(liEl);
+		})
+	}
+
+	const showScreen = async (id) => {
+		if (id == 'main-menu') {
+			const items = await fetchItems()
+			renderItems(items)
+		}
 		for (let i = 0; i < screenEls.length; i++) {
 			if (screenEls[i].id == id) {
 				screenEls[i].classList.remove('hidden')
 			} else {
 				screenEls[i].classList.add('hidden')
 			}
-		}
-		if (id == 'add-item') {
-			autoFill()
-		}
-		if (id == 'main-menu') {
-			fetchItems()
 		}
 	}
 
@@ -98,7 +145,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		});
 		const tokenInfo = await respRaw.json();
 		token = tokenInfo.token
-		expiration = tokenInfo.tokenExpiration
+		tokenExpiration = tokenInfo.tokenExpiration
 		await browser.storage.local.set({
 			token: tokenInfo.token,
 			tokenExpiration: tokenInfo.tokenExpiration,
@@ -109,7 +156,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	let deviceId = null;
 	let secret = null;
 	let token = null;
-	let expiration = null;
+	let tokenExpiration = null;
 
 	// Set up all events
 	// LOGIN
@@ -134,7 +181,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			deviceId,
 			secret
 		})
-		showScreen('main-menu')
+		await showScreen('main-menu')
 	})
 	// MAIN MENU
 	document.querySelector('#main-menu button.logout').addEventListener('click', async (e) => {
@@ -147,11 +194,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		deviceId = null
 		secret = null
 		token = null
-		showScreen('login')
+		await showScreen('login')
 	})
 	document.querySelector('#main-menu button.add-item').addEventListener('click', async (e) => {
 		e.preventDefault()
-		showScreen('add-item')
+		await showScreen('add-item')
+		await autoFill()
 	})
 	// ADD ITEM
 	document.querySelector('#add-item form').addEventListener('submit', async (e) => {
@@ -176,35 +224,63 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			}
 		});
 		const resp = await respRaw.json();
-		showScreen('main-menu')
+		await showScreen('main-menu')
+	});
+	// EDIT ITEM
+	document.querySelector('#edit-item form').addEventListener('submit', async (e) => {
+		e.preventDefault()
+		const username = document.querySelector('#edit-item .username').value
+		const password = document.querySelector('#edit-item .password').value
+		const website = document.querySelector('#edit-item .website').value
+		const itemId = document.querySelector('#edit-item .item-id').value
+		const respRaw = await fetch(SERVER_BASE_URI + '/items/'+itemId, {
+			method: "PUT",
+			body: JSON.stringify({
+				item: {
+					username,
+					password,
+					website,
+				}
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				"Authorization": "Bearer "+token
+			}
+		});
+		const resp = await respRaw.json();
+		await showScreen('main-menu')
 	});
 
 	// Startup
 	!(async () => {
-		const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'expiration']);
+		const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration']);
 		deviceId = credentials.deviceId
 		secret = credentials.secret
 		token = credentials.token
-		expiration = luxon.DateTime.fromISO(credentials.expiration)
+		tokenExpiration = luxon.DateTime.fromISO(credentials.tokenExpiration)
 		if (!deviceId) {
 			// is not logged in
-			showScreen('login')
+			await showScreen('login')
 			return
 		}
 		if (!secret) {
 			// is not logged in
-			showScreen('login')
+			await showScreen('login')
 			return
 		}
-		if (!token || expiration < luxon.DateTime.utc()) {
+		console.log('start up hello')
+		console.log(tokenExpiration.toISO())
+		console.log(credentials.tokenExpiration)
+		if (!token || !credentials.tokenExpiration || tokenExpiration < luxon.DateTime.utc()) {
+			console.log("fetching new token")
 			// warning mutates global state
 			await fetchToken({
 				deviceId,
 				secret
 			})
 		}
-		// TODO session expiration/ renewal
+		// TODO session tokenExpiration/ renewal
 		// is logged in
-		showScreen('main-menu')
+		await showScreen('main-menu')
 	})()
 });

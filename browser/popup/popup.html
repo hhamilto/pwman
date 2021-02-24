@@ -15,6 +15,8 @@
 		</form>
 	</div>
 	<div id="main-menu" class="hidden screen">
+		<ul class="current-items">
+		</ul>
 		<button class="add-item">Add Item</button>
 		<button class="logout">Logout</button>
 	</div>
@@ -29,6 +31,28 @@
 			<button class="add-item">Add Item</button>
 		</form>
 	</div>
+	<div id="edit-item" class="hidden screen">
+		<form>
+			username:
+			<input type="text" class="username"/>
+			password:
+			<input type="text" class="password"/>
+			website:
+			<input type="text" class="website"/>
+			<input type="hidden" class="item-id"/>
+			<button class="add-item">Edit Item</button>
+		</form>
+	</div>
+
+	<template id="item-row">
+		<li>
+			<span class="website"></span>
+			<span class="username"></span>
+			<button class="fill">Fill</button>
+			<button class="edit">Edit</button>
+		</li>
+	</template>
+
 	<script src="vendor/luxon.js"></script>
 	<script src="js.js"></script>
 </body>

@@ -30,5 +30,6 @@ app.use(isAuthenticated)
 
 app.post('/items', require('./routes/create-item.js'))
 app.get('/items', require('./routes/search-items.js'))
+app.put('/items/:itemId', require('./routes/edit-item.js'))
 
 app.listen(process.env.PORT || 3000)

@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
 		return;
 	}
 	const token = req.headers.authorization.substring('Bearer '.length)
+	console.log(token)
 	db.query(
 		`SELECT
 		  u.username,
