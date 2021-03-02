@@ -1,9 +1,3 @@
-// let myPort = browser.runtime.connect({
-// 	name: "tabs-connect-example"
-// });
-
-// myPort.postMessage({greeting: "hello from content script"});
-
 const userNameSelectors = [
 	'input[type="email" i]',
 	'input[placeholder*="email" i]',
@@ -11,13 +5,11 @@ const userNameSelectors = [
 	'input[id*="userid" i]'
 ]
 
-const passwordSelectors = [
-	'input[type="password"]'
-]
+const passwordSelectors = ['input[type="password"]']
 
 browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	if (message.action == 'fetch url') {
-		sendResponse(''+window.location)
+		sendResponse(String(window.location))
 	} else if (message.action == 'fetch username') {
 		for (let i = 0; i < userNameSelectors.length; i++) {
 			const els = document.querySelectorAll(userNameSelectors[i])
@@ -67,8 +59,11 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			passwordEl.value = message.item.password
 		}
 	} else {
-		console.log('unrecognized action', m)
+		console.log('unrecognized action', message)
 	}
-	// console.log("In content script, received message from background script: ");
-	// console.log(m);
+
+	/*
+	 * console.log("In content script, received message from background script: ");
+	 * console.log(m);
+	 */
 });

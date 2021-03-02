@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "'"
+    "test": "'",
+    "dev": "nodemon index",
+    "start": "nodemon index"
   },
   "author": "Hurricane Hamilton",
   "license": "GPL",
