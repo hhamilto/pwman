@@ -1,8 +1,11 @@
+/* eslint-disable no-console */
+// TODO ^ logger maybe?
 const userNameSelectors = [
 	'input[type="email" i]',
 	'input[placeholder*="email" i]',
 	'input[placeholder*="User ID" i]',
-	'input[id*="userid" i]'
+	'input[id*="userid" i]',
+	'input[name="user_id" i]'
 ]
 
 const passwordSelectors = ['input[type="password"]']
@@ -17,7 +20,7 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			for (let j = 0; j < els.length; j++) {
 				if (els[j].value) {
 					sendResponse(els[j].value)
-					return;
+					return
 				}
 			}
 		}
@@ -28,7 +31,7 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			for (let j = 0; j < els.length; j++) {
 				if (els[j].value) {
 					sendResponse(els[j].value)
-					return;
+					return
 				}
 			}
 		}
@@ -36,7 +39,7 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 		console.log('wtg')
 		console.log('message', message)
 		// todo -- store selectors too?
-		let usernameEl;
+		let usernameEl
 		for (let i = 0; i < userNameSelectors.length; i++) {
 			usernameEl = document.querySelector(userNameSelectors[i])
 			if (usernameEl) {
@@ -66,4 +69,4 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	 * console.log("In content script, received message from background script: ");
 	 * console.log(m);
 	 */
-});
+})

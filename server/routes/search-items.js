@@ -1,7 +1,5 @@
 const db = require("../db")
-const bcrypt = require("bcrypt")
 const logger = require('../logger')
-const { v4: uuid } = require('uuid');
 
 module.exports = (req, res) => {
 	// TODO: limit result size
@@ -12,7 +10,7 @@ module.exports = (req, res) => {
 		FROM secure_items s
 		JOIN users u ON u.id = s.owning_user_id
 		WHERE
-		  u.id = ? `;
+		  u.id = ? `
 	const params = [res.locals.user.id]
 	if (req.query.website) {
 		query += 'AND JSON_EXTRACT(s.item, "$.website") = ?'
@@ -21,18 +19,22 @@ module.exports = (req, res) => {
 	db.query(query, params, function (err, results) {
 		if (err) {
 			logger.error('Could not create user: could not insert: ' + err.message)
-			return res.status(500).json({'error': 'internal server error'})
+			return res.status(500).json({error: 'internal server error'})
 		}
-		const items = results.map(row => {
-			return {
-				id: row.public_id,
-				// todo parse catch
-				item: JSON.parse(row.item)
-			}
-		})
-		console.log('resp', items)
-		res.json({
-			items: items
-		})
-	});
+		try {
+
+			const items = results.map(row => {
+				return {
+					id: row.public_id,
+					item: JSON.parse(row.item)
+				}
+			})
+			res.json({
+				items: items
+			})
+		} catch (e) {
+			logger.error('Error parsing secure_items')
+			res.status(500).json({error: 'internal server error'})
+		}
+	})
 }

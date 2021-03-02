@@ -4,7 +4,7 @@ const levels = [
 	'debug',
 	'info',
 	'error'
-];
+]
 
 
 module.exports = {
@@ -19,8 +19,9 @@ levels.forEach((l, index) => {
 		}
 		let timestamp = ''
 		if (process.env.SHOW_TIMESTAMP_LOGS) {
-			timestamp = new Date().toISOString() + ' ';
+			timestamp = new Date().toISOString() + ' '
 		}
+		// eslint-disable-next-line no-console
 		console.log(timestamp + '[' + l.toUpperCase() + ']: ', ...toLog)
 	}
 })

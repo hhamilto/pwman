@@ -10,8 +10,10 @@ module.exports = {
         "ecmaVersion": 12
     },
     "globals": {
-        "browser": true
+        "browser": true,
+        "luxon": true
     },
+    "ignorePatterns": [".eslintrc.js", "**/vendor/*.js", "**/node_modules/**/*"],
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "error",
@@ -69,7 +71,7 @@ module.exports = {
         "func-call-spacing": "error",
         "func-name-matching": "error",
         "func-names": "off",
-        "func-style": "error",
+        "func-style": "off",
         "function-call-argument-newline": [
             "error",
             "consistent"
@@ -114,7 +116,7 @@ module.exports = {
         "no-bitwise": "error",
         "no-caller": "error",
         "no-confusing-arrow": "error",
-        "no-console": "off",
+        "no-console": "error",
         "no-constructor-return": "error",
         "no-continue": "error",
         "no-div-regex": "error",
@@ -187,7 +189,7 @@ module.exports = {
         "no-unreachable-loop": "error",
         "no-unsafe-optional-chaining": "error",
         "no-unused-expressions": "error",
-        "no-use-before-define": "error",
+        "no-use-before-define": ["error", { "functions": false }],
         "no-useless-backreference": "error",
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
@@ -215,7 +217,7 @@ module.exports = {
         "padding-line-between-statements": "error",
         "prefer-arrow-callback": "off",
         "prefer-const": "error",
-        "prefer-destructuring": "error",
+        "prefer-destructuring": "off",
         "prefer-exponentiation-operator": "error",
         "prefer-named-capture-group": "error",
         "prefer-numeric-literals": "error",
@@ -225,18 +227,18 @@ module.exports = {
         "prefer-rest-params": "error",
         "prefer-spread": "error",
         "prefer-template": "off",
-        "quote-props": "off",
+        "quote-props": ["error", "as-needed"],
         "quotes": "off",
         "radix": "error",
         "require-atomic-updates": "error",
         "require-await": "error",
-        "require-unicode-regexp": "error",
+        "require-unicode-regexp": "off",
         "rest-spread-spacing": "error",
-        "semi": "off",
+        "semi": ["error", "never", { "beforeStatementContinuationChars": "always"}],
         "semi-spacing": "error",
         "semi-style": [
             "error",
-            "last"
+            "first"
         ],
         "sort-imports": "error",
         "sort-keys": "off",

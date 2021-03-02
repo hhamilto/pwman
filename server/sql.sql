@@ -31,4 +31,4 @@ create table secure_items (
    FOREIGN KEY(owning_user_id) REFERENCES users(id),
    UNIQUE KEY(public_id),
    PRIMARY KEY ( id )
-)
+);

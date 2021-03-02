@@ -1,17 +1,29 @@
-
-const MINUTE_MILLIS = 60 * 1000;
-const TOKEN_EXPIRATION_MILLIS = 15 * MINUTE_MILLIS
+/* eslint-disable no-console */
+/*
+ * FIXME renew token in background? autofill in bg?
+ * const MINUTE_MILLIS = 60 * 1000
+ * const TOKEN_EXPIRATION_MILLIS = 15 * MINUTE_MILLIS
+ */
 const SERVER_BASE_URI = 'http://localhost:3000'
 
-// FIXME try/catch for http status/network errors?
+/*
+ * FIXME try/catch for http status/network errors?
+ * FIXME: refactor for sane code organization
+ */
+window.addEventListener('DOMContentLoaded', () => {
 
-window.addEventListener('DOMContentLoaded', (event) => {
+	// Global State
+	let deviceId = null
+	let secret = null
+	let token = null
+	let tokenExpiration = null
+
 	const screenEls = document.querySelectorAll('.screen')
 	const autoFill = async () => {
 		const [currentTab] = await browser.tabs.query({
 			currentWindow: true,
 			active: true
-		});
+		})
 		const url = await browser.tabs.sendMessage(
 			currentTab.id,
 			{
@@ -19,7 +31,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			}
 		)
 		const parsedURL = new URL(url)
-		const origin = parsedURL.origin
+		const {origin} = parsedURL
 		document.querySelector('#add-item .website').value = origin
 
 		const username = await browser.tabs.sendMessage(
@@ -47,7 +59,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const [currentTab] = await browser.tabs.query({
 			currentWindow: true,
 			active: true
-		});
+		})
 		const url = await browser.tabs.sendMessage(
 			currentTab.id,
 			{
@@ -55,15 +67,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			}
 		)
 		const parsedURL = new URL(url)
-		const origin = parsedURL.origin
-		const respRaw = await fetch(SERVER_BASE_URI + '/items?website='+encodeURIComponent(origin), {
+		const {origin} = parsedURL
+		const respRaw = await fetch(SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
 			method: "GET",
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
-				"Authorization": "Bearer "+token
+				Authorization: "Bearer " + token
 			}
-		});
-		const parsedResp = await respRaw.json();
+		})
+		const parsedResp = await respRaw.json()
 		console.log(parsedResp)
 		return parsedResp.items
 	}
@@ -72,38 +84,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const [currentTab] = await browser.tabs.query({
 			currentWindow: true,
 			active: true
-		});
-		const url = await browser.tabs.sendMessage(
+		})
+		await browser.tabs.sendMessage(
 			currentTab.id,
 			{
 				action: "fill item",
 				item
 			}
 		)
-	}
-
-	const renderItems = (items) => {
-		const currentItemsULEL = document.querySelector('#main-menu .current-items')
-		currentItemsULEL.innerHTML = '';
-		var itemTemplate = document.querySelector('#item-row');
-		items.forEach(i => {
-			const liEl = itemTemplate.content.cloneNode(true)
-			liEl.querySelector(".website").textContent = i.item.website;
-			liEl.querySelector(".username").textContent = i.item.username;
-			liEl.querySelector("button.fill").addEventListener('click', (e) => {
-				e.preventDefault();
-				fillItem(i.item)
-			})
-			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
-				e.preventDefault();
-				await showScreen('edit-item')
-				document.querySelector('#edit-item .website').value = i.item.website
-				document.querySelector('#edit-item .username').value = i.item.username
-				document.querySelector('#edit-item .password').value = i.item.password
-				document.querySelector('#edit-item .item-id').value = i.id
-			})
-			currentItemsULEL.appendChild(liEl);
-		})
 	}
 
 	const showScreen = async (id) => {
@@ -120,6 +108,30 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		}
 	}
 
+	function renderItems(items) {
+		const currentItemsULEL = document.querySelector('#main-menu .current-items')
+		currentItemsULEL.innerHTML = ''
+		var itemTemplate = document.querySelector('#item-row')
+		items.forEach(i => {
+			const liEl = itemTemplate.content.cloneNode(true)
+			liEl.querySelector(".website").textContent = i.item.website
+			liEl.querySelector(".username").textContent = i.item.username
+			liEl.querySelector("button.fill").addEventListener('click', (e) => {
+				e.preventDefault()
+				fillItem(i.item)
+			})
+			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
+				e.preventDefault()
+				await showScreen('edit-item')
+				document.querySelector('#edit-item .website').value = i.item.website
+				document.querySelector('#edit-item .username').value = i.item.username
+				document.querySelector('#edit-item .password').value = i.item.password
+				document.querySelector('#edit-item .item-id').value = i.id
+			})
+			currentItemsULEL.appendChild(liEl)
+		})
+	}
+
 	const createDevice = async ({username, password}) => {
 		const respRaw = await fetch(SERVER_BASE_URI + '/devices', {
 			method: "POST",
@@ -131,35 +143,32 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				}
 			}),
 			headers: {"Content-type": "application/json; charset=UTF-8"}
-		});
-		return respRaw.json();
+		})
+		return respRaw.json()
 	}
 
 	const fetchToken = async ({deviceId, secret}) => {
-		const respRaw = await fetch(SERVER_BASE_URI + '/devices/'+encodeURIComponent(deviceId)+'/sessions', {
+		const respRaw = await fetch(SERVER_BASE_URI + '/devices/' + encodeURIComponent(deviceId) + '/sessions', {
 			method: "POST",
 			body: JSON.stringify({
 				deviceSecret: secret
 			}),
 			headers: {"Content-type": "application/json; charset=UTF-8"}
-		});
-		const tokenInfo = await respRaw.json();
+		})
+		const tokenInfo = await respRaw.json()
 		token = tokenInfo.token
 		tokenExpiration = tokenInfo.tokenExpiration
 		await browser.storage.local.set({
 			token: tokenInfo.token,
 			tokenExpiration: tokenInfo.tokenExpiration,
-		});
+		})
 	}
 
-	// Global State
-	let deviceId = null;
-	let secret = null;
-	let token = null;
-	let tokenExpiration = null;
 
-	// Set up all events
-	// LOGIN
+	/*
+	 * Set up all events
+	 * LOGIN
+	 */
 	document.querySelector('#login form').addEventListener('submit', async (e) => {
 		e.preventDefault()
 		const username = document.querySelector('#login .username').value
@@ -172,8 +181,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			await browser.storage.local.set({
 				deviceId: createDeviceResp.deviceId,
 				secret: createDeviceResp.deviceSecret
-			});
+			})
+			// eslint-disable-next-line require-atomic-updates
 			deviceId = createDeviceResp.deviceId
+			// eslint-disable-next-line require-atomic-updates
 			secret = createDeviceResp.deviceSecret
 		}
 		// Warning mutates global state
@@ -190,7 +201,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			deviceId: null,
 			secret: null,
 			token: null
-		});
+		})
 		deviceId = null
 		secret = null
 		token = null
@@ -207,7 +218,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const username = document.querySelector('#add-item .username').value
 		const password = document.querySelector('#add-item .password').value
 		const website = document.querySelector('#add-item .website').value
-		const respRaw = await fetch(SERVER_BASE_URI + '/items', {
+		await fetch(SERVER_BASE_URI + '/items', {
 			method: "POST",
 			body: JSON.stringify({
 				item: {
@@ -220,12 +231,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
-				"Authorization": "Bearer "+token
+				Authorization: "Bearer " + token
 			}
-		});
-		const resp = await respRaw.json();
+		})
 		await showScreen('main-menu')
-	});
+	})
 	// EDIT ITEM
 	document.querySelector('#edit-item form').addEventListener('submit', async (e) => {
 		e.preventDefault()
@@ -233,7 +243,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		const password = document.querySelector('#edit-item .password').value
 		const website = document.querySelector('#edit-item .website').value
 		const itemId = document.querySelector('#edit-item .item-id').value
-		const respRaw = await fetch(SERVER_BASE_URI + '/items/'+itemId, {
+		await fetch(SERVER_BASE_URI + '/items/' + itemId, {
 			method: "PUT",
 			body: JSON.stringify({
 				item: {
@@ -244,16 +254,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
-				"Authorization": "Bearer "+token
+				Authorization: "Bearer " + token
 			}
-		});
-		const resp = await respRaw.json();
+		})
 		await showScreen('main-menu')
-	});
+	})
 
 	// Startup
-	!(async () => {
-		const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration']);
+	;(async () => {
+		const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
 		deviceId = credentials.deviceId
 		secret = credentials.secret
 		token = credentials.token
@@ -279,8 +288,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 				secret
 			})
 		}
-		// TODO session tokenExpiration/ renewal
-		// is logged in
+
+		/*
+		 * TODO session tokenExpiration/ renewal
+		 * is logged in
+		 */
 		await showScreen('main-menu')
 	})()
-});
+})

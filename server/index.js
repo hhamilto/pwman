@@ -3,7 +3,7 @@ const cors = require('cors')
 const isAuthenticated = require("./middleware/is-authenticated")
 
 const logger = require("./logger")
-logger.level = 'debug'
+logger.level = process.env.LOG_LEVEL || 'info'
 
 const app = express()
 

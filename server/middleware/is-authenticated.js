@@ -1,5 +1,4 @@
 const db = require("../db")
-const bcrypt = require("bcrypt")
 const logger = require('../logger')
 
 module.exports = (req, res, next) => {
@@ -7,16 +6,15 @@ module.exports = (req, res, next) => {
 		res.status(400).json({
 			error: 'Please specify an authorization header'
 		})
-		return;
+		return
 	}
-	if (!/Bearer /.test(req.headers.authorization)) {
+	if (!(/Bearer /).test(req.headers.authorization)) {
 		res.status(400).json({
 			error: 'Malformed authorization header'
 		})
-		return;
+		return
 	}
 	const token = req.headers.authorization.substring('Bearer '.length)
-	console.log(token)
 	db.query(
 		`SELECT
 		  u.username,
@@ -30,7 +28,7 @@ module.exports = (req, res, next) => {
 		function (err, results) {
 			if (err) {
 				logger.error('Could not authn: could not select: ' + err.message)
-				return res.status(500).json({'error': 'internal server error'})
+				return res.status(500).json({error: 'internal server error'})
 			}
 			if (!results || !results[0]) {
 				return res.status(403).json({
@@ -43,5 +41,5 @@ module.exports = (req, res, next) => {
 			}
 			next()
 		}
-	);
+	)
 }
