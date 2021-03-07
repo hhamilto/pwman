@@ -1,10 +1,7 @@
 /* eslint-disable no-console */
 /*
- * FIXME renew token in background? autofill in bg?
- * const MINUTE_MILLIS = 60 * 1000
- * const TOKEN_EXPIRATION_MILLIS = 15 * MINUTE_MILLIS
+ * FIXME autofill in bg?
  */
-const SERVER_BASE_URI = 'http://localhost:3000'
 
 /*
  * FIXME try/catch for http status/network errors?
@@ -96,8 +93,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	const showScreen = async (id) => {
 		if (id == 'main-menu') {
-			const items = await fetchItems()
-			renderItems(items)
+			let items;
+			try {
+				items = await fetchItems()
+			} catch (e) {
+				console.log("Could not fetch items: ", e)
+			}
+			if (items) {
+				renderItems(items)
+			}
 		}
 		for (let i = 0; i < screenEls.length; i++) {
 			if (screenEls[i].id == id) {

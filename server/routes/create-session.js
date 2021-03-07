@@ -38,7 +38,7 @@ module.exports = (req, res) => {
 				}
 				var token = buffer.toString('hex')
 				const tokenExpiration = DateTime.utc().plus({
-					hours: 1
+					minutes: 60
 				})
 				db.query('UPDATE devices SET session_token = ?, token_expiration = ? WHERE id = ?', [token, tokenExpiration.toJSDate(), deviceId], (err) => {
 					if (err) {
