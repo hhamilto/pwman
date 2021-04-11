@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "'",
-    "dev": "nodemon index",
-    "start": "nodemon index"
+    "dev": "bash -c 'source envs/dev.env && nodemon index'",
+    "start": "node index"
   },
   "author": "Hurricane Hamilton",
   "license": "GPL",

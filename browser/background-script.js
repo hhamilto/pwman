@@ -22,13 +22,10 @@ setInterval(async () => {
 	const secret = credentials.secret
 	let token = credentials.token
 	let tokenExpiration = luxon.DateTime.fromISO(credentials.tokenExpiration)
-	console.log('deviceId', deviceId)
-	console.log('tokenExpiration', tokenExpiration.toISO())
 	if (!deviceId || !secret) {
 		return
 	}
 	if (tokenExpiration > luxon.DateTime.utc().plus({minutes:1})) {
-		console.log("sleeping, not renewing token")
 		return
 	}
 	const tokenInfo = await fetchToken({

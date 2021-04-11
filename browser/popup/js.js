@@ -3,6 +3,8 @@
  * FIXME autofill in bg?
  */
 
+const SERVER_BASE_URI = 'http://localhost:3000'
+
 /*
  * FIXME try/catch for http status/network errors?
  * FIXME: refactor for sane code organization
@@ -73,7 +75,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 		const parsedResp = await respRaw.json()
-		console.log(parsedResp)
 		return parsedResp.items
 	}
 
@@ -175,13 +176,31 @@ window.addEventListener('DOMContentLoaded', () => {
 	 */
 	document.querySelector('#login form').addEventListener('submit', async (e) => {
 		e.preventDefault()
+		const showError = (message) => {
+			const errorMessageEl = document.querySelector('#login .error')
+			errorMessageEl.classList.remove('hidden')
+			errorMessageEl.textContent = message
+		}
 		const username = document.querySelector('#login .username').value
 		const password = document.querySelector('#login .password').value
 		if (!deviceId || !secret) {
-			const createDeviceResp = await createDevice({
-				username,
-				password
-			})
+			let createDeviceResp;
+			try {
+				createDeviceResp = await createDevice({
+					username,
+					password
+				})
+			} catch (e) {
+				// TODO better message
+				showError('Could not create a device: ' + e.message)
+				return;
+			}
+			console.log(createDeviceResp.error)
+			if (createDeviceResp.error) {
+				showError('Could not login: ' + createDeviceResp.error)
+				return;
+			}
+
 			await browser.storage.local.set({
 				deviceId: createDeviceResp.deviceId,
 				secret: createDeviceResp.deviceSecret
@@ -192,10 +211,16 @@ window.addEventListener('DOMContentLoaded', () => {
 			secret = createDeviceResp.deviceSecret
 		}
 		// Warning mutates global state
-		await fetchToken({
-			deviceId,
-			secret
-		})
+		try {
+			await fetchToken({
+				deviceId,
+				secret
+			})
+		} catch (e) {
+			// TODO better message
+			showError('Could not login: ' + e.message)
+			return;
+		}
 		await showScreen('main-menu')
 	})
 	// MAIN MENU
