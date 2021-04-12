@@ -30,7 +30,6 @@ body {
 
 #login .input-group label {
 	display: block;
-	color: #666;
 }
 
 
@@ -46,4 +45,27 @@ body {
 #login .error {
 	margin-top: 1rem;
 	color: #C00;
+}
+
+#main-menu .logout {
+	float: right;
+}
+
+#main-menu .current-items {
+	clear: both;
+	margin-top: 1rem;
+	list-style: none;
+	padding: 0;
+}
+
+.clear-fix {
+	clear: both;
+}
+
+.h1-title {
+	margin: 0;
+}
+
+.label-gray {
+	color: #666;
 }

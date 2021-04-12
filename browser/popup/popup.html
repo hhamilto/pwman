@@ -7,13 +7,13 @@
 <body>
 	<div id="login" class="hidden screen">
 		<form>
-			<h1>PWMAN Login</h1>
+			<h1 class="h1-title">PWMAN Login</h1>
 			<div class="input-group">
-				<label>username:</label>
+				<label class="label-gray">username:</label>
 				<input class="username"/>
 			</div>
 			<div class="input-group">
-				<label>password:</label>
+				<label class="label-gray">password:</label>
 				<input class="password" type='password'/>
 			</div>
 			<button type="submit">Login</button>
@@ -21,10 +21,14 @@
 		</form>
 	</div>
 	<div id="main-menu" class="hidden screen">
+		<div class="header">
+			<button class="logout">Logout</button>
+			<h1 class="h1-title">PWMAN</h1>
+			<div class="clear-fix"></div>
+		</div>
 		<ul class="current-items">
 		</ul>
 		<button class="add-item">Add Item</button>
-		<button class="logout">Logout</button>
 	</div>
 	<div id="add-item" class="hidden screen">
 		<form>
@@ -46,14 +50,19 @@
 			website:
 			<input type="text" class="website"/>
 			<input type="hidden" class="item-id"/>
-			<button class="add-item">Edit Item</button>
+			<button class="add-item">Nevermind</button>
+			<button class="add-item">Save edits</button>
 		</form>
 	</div>
 
 	<template id="item-row">
 		<li>
-			<span class="website"></span>
-			<span class="username"></span>
+			<div>
+				<span class="label-gray">website:</span> <span class="website"></span>
+			</div>
+			<div>
+				<span class="label-gray">username:</span> <span class="username"></span>
+			</div>
 			<button class="fill">Fill</button>
 			<button class="edit">Edit</button>
 		</li>
