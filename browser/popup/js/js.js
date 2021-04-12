@@ -40,6 +40,7 @@ if (typeof browser == 'undefined') {
 /*
  * FIXME try/catch for http status/network errors?
  * FIXME: refactor for sane code organization
+          hi level 
  */
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -50,41 +51,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	let tokenExpiration = null
 
 	const screenEls = document.querySelectorAll('.screen')
-	const autoFill = async () => {
-		const [currentTab] = await browser.tabs.query({
-			currentWindow: true,
-			active: true
-		})
-		const url = await browser.tabs.sendMessage(
-			currentTab.id,
-			{
-				action: "fetch url"
-			}
-		)
-		const parsedURL = new URL(url)
-		const {origin} = parsedURL
-		document.querySelector('#add-item .website').value = origin
-
-		const username = await browser.tabs.sendMessage(
-			currentTab.id,
-			{
-				action: "fetch username"
-			}
-		)
-		if (username) {
-			document.querySelector('#add-item .username').value = username
-		}
-
-		const password = await browser.tabs.sendMessage(
-			currentTab.id,
-			{
-				action: "fetch password"
-			}
-		)
-		if (password) {
-			document.querySelector('#add-item .password').value = password
-		}
-	}
 
 	const fetchItems = async () => {
 		if (IN_BROWSER_TAB) {
@@ -122,7 +88,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		return parsedResp.items
 	}
 
-	const fillItem = async (item) => {
+	const fillItemOnBrowserPage = async (item) => {
 		const [currentTab] = await browser.tabs.query({
 			currentWindow: true,
 			active: true
@@ -167,7 +133,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			liEl.querySelector(".username").textContent = i.item.username
 			liEl.querySelector("button.fill").addEventListener('click', (e) => {
 				e.preventDefault()
-				fillItem(i.item)
+				fillItemOnBrowserPage(i.item)
 			})
 			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
 				e.preventDefault()
@@ -212,7 +178,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			tokenExpiration: tokenInfo.tokenExpiration,
 		})
 	}
-
 
 	/*
 	 * Set up all events
@@ -283,7 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	document.querySelector('#main-menu button.add-item').addEventListener('click', async (e) => {
 		e.preventDefault()
 		await showScreen('add-item')
-		await autoFill()
+		await pwmanHelpers.guessItemFromPage()
 	})
 	// ADD ITEM
 	document.querySelector('#add-item form').addEventListener('submit', async (e) => {
