@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /*
  * FIXME autofill in bg?
+ * FIXME cypress tests mebbe
  */
 
 const SERVER_BASE_URI = 'http://localhost:3000'
