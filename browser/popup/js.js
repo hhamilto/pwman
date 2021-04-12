@@ -5,6 +5,38 @@
 
 const SERVER_BASE_URI = 'http://localhost:3000'
 
+let IN_BROWSER_TAB = false
+// mock browser for testing in browser (where browser won't be defined)
+if (typeof browser == 'undefined') {
+	IN_BROWSER_TAB = true;
+	const IS_LOGGED_IN = true;
+	browser = {}
+	browser.storage = {}
+	browser.storage.local = {}
+	browser.storage.local.get = async (key) => {
+		// todo -- check what is being gotten if we use localstorage for other stuff
+		if (IS_LOGGED_IN) {
+			return {
+				deviceId: 'foo',
+				secret: 'bar',
+				token: 'qux',
+				tokenExpiration: '2222-01-01'
+			}
+		}
+		return {}
+	}
+	browser.storage.local.set = async () => {}
+	browser.tabs = {}
+	browser.tabs.query = async () => {
+		return [{
+			id: 'baz'
+		}]
+	}
+	browser.tabs.sendMessage = async () => {
+		return 'http://localhost'
+	}
+}
+
 /*
  * FIXME try/catch for http status/network errors?
  * FIXME: refactor for sane code organization
@@ -55,6 +87,18 @@ window.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const fetchItems = async () => {
+		if (IN_BROWSER_TAB) {
+			// send mock items
+			console.log("WARNING USING MOCK ITEMS")
+			return [{
+				item: {
+					username: 'hello',
+					password: 'testpw',
+					website: 'http://localhost:8080'
+				},
+				id: 'foo'
+			}]
+		}
 		const [currentTab] = await browser.tabs.query({
 			currentWindow: true,
 			active: true
@@ -306,11 +350,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			await showScreen('login')
 			return
 		}
-		console.log('start up hello')
-		console.log(tokenExpiration.toISO())
-		console.log(credentials.tokenExpiration)
 		if (!token || !credentials.tokenExpiration || tokenExpiration < luxon.DateTime.utc()) {
-			console.log("fetching new token")
 			// warning mutates global state
 			await fetchToken({
 				deviceId,
