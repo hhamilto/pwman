@@ -60,11 +60,11 @@
 	}
 
 	pwman.screens['main-menu'].show = async () => {
-		let items;
+		let items
 		try {
 			items = await pwman.helpers.fetchItems()
 		} catch (e) {
-			console.log("Could not fetch items: ", e)
+			pwman.log("Could not fetch items: ", e)
 		}
 		if (items) {
 			renderItems(items)

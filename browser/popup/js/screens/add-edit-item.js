@@ -5,7 +5,7 @@ pwman.screens['add-item'].setup = () => {
 		const username = document.querySelector('#add-item .username').value
 		const password = document.querySelector('#add-item .password').value
 		const website = document.querySelector('#add-item .website').value
-		await fetch(SERVER_BASE_URI + '/items', {
+		await fetch(pwman.constants.SERVER_BASE_URI + '/items', {
 			method: "POST",
 			body: JSON.stringify({
 				item: {
@@ -37,7 +37,7 @@ pwman.screens['edit-item'].setup = () => {
 		const password = document.querySelector('#edit-item .password').value
 		const website = document.querySelector('#edit-item .website').value
 		const itemId = document.querySelector('#edit-item .item-id').value
-		await fetch(SERVER_BASE_URI + '/items/' + itemId, {
+		await fetch(pwman.constants.SERVER_BASE_URI + '/items/' + itemId, {
 			method: "PUT",
 			body: JSON.stringify({
 				item: {

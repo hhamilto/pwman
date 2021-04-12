@@ -11,12 +11,13 @@ module.exports = {
     },
     "globals": {
         "browser": true,
-        "luxon": true
+        "luxon": true,
+        "pwman": true
     },
     "ignorePatterns": [".eslintrc.js", "**/vendor/*.js", "**/node_modules/**/*"],
     "rules": {
         "accessor-pairs": "error",
-        "array-bracket-newline": "error",
+        "array-bracket-newline": "off",
         "array-bracket-spacing": [
             "error",
             "never"
@@ -122,7 +123,7 @@ module.exports = {
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "error",
-        "no-empty-function": "error",
+        "no-empty-function": "off",
         "no-eq-null": "error",
         "no-eval": "error",
         "no-extend-native": "error",
@@ -143,7 +144,7 @@ module.exports = {
         "no-loop-func": "error",
         "no-loss-of-precision": "error",
         "no-magic-numbers": "off",
-        "no-mixed-operators": "error",
+        "no-mixed-operators": "off",
         "no-multi-assign": "error",
         "no-multi-spaces": "error",
         "no-multi-str": "error",
@@ -231,7 +232,7 @@ module.exports = {
         "quotes": "off",
         "radix": "error",
         "require-atomic-updates": "error",
-        "require-await": "error",
+        "require-await": "off",
         "require-unicode-regexp": "off",
         "rest-spread-spacing": "error",
         "semi": ["error", "never", { "beforeStatementContinuationChars": "always"}],

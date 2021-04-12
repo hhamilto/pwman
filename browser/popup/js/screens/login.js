@@ -10,7 +10,7 @@ pwman.screens.login.setup = () => {
 		const username = document.querySelector('#login .username').value
 		const password = document.querySelector('#login .password').value
 		if (!pwman.credentials.deviceId || !pwman.credentials.secret) {
-			let createDeviceResp;
+			let createDeviceResp
 			try {
 				createDeviceResp = await pwman.helpers.createDevice({
 					username,
@@ -19,11 +19,11 @@ pwman.screens.login.setup = () => {
 			} catch (e) {
 				// TODO better message
 				showError('Could not create a device: ' + e.message)
-				return;
+				return
 			}
 			if (createDeviceResp.error) {
 				showError('Could not login: ' + createDeviceResp.error)
-				return;
+				return
 			}
 
 			await browser.storage.local.set({
@@ -44,7 +44,7 @@ pwman.screens.login.setup = () => {
 		} catch (e) {
 			// TODO better message
 			showError('Could not login: ' + e.message)
-			return;
+			return
 		}
 		await pwman.showScreen('main-menu')
 	})

@@ -9,17 +9,24 @@ pwman.credentials = {
 	tokenExpiration: null,
 }
 
-const SERVER_BASE_URI = 'http://localhost:3000'
+pwman.log = (...args) => {
+	// eslint-disable-next-line no-console
+	console.log(...args)
+}
+
+pwman.constants = {
+	SERVER_BASE_URI: 'http://localhost:3000'
+}
 
 let IN_BROWSER_TAB = false
 // mock browser for testing in browser (where browser won't be defined)
 if (typeof browser == 'undefined') {
-	IN_BROWSER_TAB = true;
-	const IS_LOGGED_IN = true;
+	IN_BROWSER_TAB = true
+	const IS_LOGGED_IN = true
 	browser = {}
 	browser.storage = {}
 	browser.storage.local = {}
-	browser.storage.local.get = async (key) => {
+	browser.storage.local.get = async () => {
 		// todo -- check what is being gotten if we use localstorage for other stuff
 		if (IS_LOGGED_IN) {
 			return {
@@ -34,9 +41,11 @@ if (typeof browser == 'undefined') {
 	browser.storage.local.set = async () => {}
 	browser.tabs = {}
 	browser.tabs.query = async () => {
-		return [{
+		return [
+{
 			id: 'baz'
-		}]
+		}
+]
 	}
 	browser.tabs.sendMessage = async () => {
 		return 'http://localhost'
@@ -82,9 +91,9 @@ pwman.helpers = {
 		}
 	},
 	createDevice: async ({username, password}) => {
-		let respRaw;
+		let respRaw
 		try {
-			respRaw = await fetch(SERVER_BASE_URI + '/devices', {
+			respRaw = await fetch(pwman.constants.SERVER_BASE_URI + '/devices', {
 				method: "POST",
 				body: JSON.stringify({
 					username,
@@ -101,7 +110,7 @@ pwman.helpers = {
 		return respRaw.json()
 	},
 	fetchToken: async ({deviceId, secret}) => {
-		const respRaw = await fetch(SERVER_BASE_URI + '/devices/' + encodeURIComponent(deviceId) + '/sessions', {
+		const respRaw = await fetch(pwman.constants.SERVER_BASE_URI + '/devices/' + encodeURIComponent(deviceId) + '/sessions', {
 			method: "POST",
 			body: JSON.stringify({
 				deviceSecret: secret
@@ -109,7 +118,9 @@ pwman.helpers = {
 			headers: {"Content-type": "application/json; charset=UTF-8"}
 		})
 		const tokenInfo = await respRaw.json()
+		// eslint-disable-next-line require-atomic-updates
 		pwman.credentials.token = tokenInfo.token
+		// eslint-disable-next-line require-atomic-updates
 		pwman.credentials.tokenExpiration = tokenInfo.tokenExpiration
 		await browser.storage.local.set({
 			token: tokenInfo.token,
@@ -119,7 +130,7 @@ pwman.helpers = {
 	fetchItems: async () => {
 		if (IN_BROWSER_TAB) {
 			// send mock items
-			console.log("WARNING USING MOCK ITEMS")
+			pwman.log("WARNING USING MOCK ITEMS")
 			return [{
 				item: {
 					username: 'hello',
@@ -141,7 +152,7 @@ pwman.helpers = {
 		)
 		const parsedURL = new URL(url)
 		const {origin} = parsedURL
-		const respRaw = await fetch(SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
+		const respRaw = await fetch(pwman.constants.SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
 			method: "GET",
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",

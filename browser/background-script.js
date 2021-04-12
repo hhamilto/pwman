@@ -20,7 +20,6 @@ setInterval(async () => {
 	const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
 	const deviceId = credentials.deviceId
 	const secret = credentials.secret
-	let token = credentials.token
 	let tokenExpiration = luxon.DateTime.fromISO(credentials.tokenExpiration)
 	if (!deviceId || !secret) {
 		return
@@ -32,10 +31,9 @@ setInterval(async () => {
 		deviceId,
 		secret
 	})
-	token = tokenInfo.token
 	tokenExpiration = tokenInfo.tokenExpiration
 	await browser.storage.local.set({
 		token: tokenInfo.token,
 		tokenExpiration: tokenInfo.tokenExpiration,
 	})
-}, 30 * 1000)
+}, TOKEN_EXPIRATION_MILLIS - 10 * MINUTE_MILLIS)

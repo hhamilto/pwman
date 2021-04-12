@@ -10,8 +10,8 @@
  */
 window.addEventListener('DOMContentLoaded', () => {
 	const screenEls = document.querySelectorAll('.screen')
-	
-	pwman.showScreen = async (id) => {
+
+	pwman.showScreen = (id) => {
 		for (let i = 0; i < screenEls.length; i++) {
 			if (screenEls[i].id == id) {
 				screenEls[i].classList.remove('hidden')
@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		if (pwman.screens[id].show) {
-			pwman.screens[id].show();
+			pwman.screens[id].show()
 		}
 	}
 
@@ -51,7 +51,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		if (!pwman.credentials.token || !storedCredentials.tokenExpiration || pwman.credentials.tokenExpiration < luxon.DateTime.utc()) {
 			// warning mutates global state
-			await fetchToken({
+			await pwman.helpers.fetchToken({
 				deviceId: pwman.credentials.deviceId,
 				secret: pwman.credentials.secret
 			})
