@@ -8,6 +8,42 @@ pwman.credentials = {
 	token: null,
 	tokenExpiration: null,
 }
+
+const SERVER_BASE_URI = 'http://localhost:3000'
+
+let IN_BROWSER_TAB = false
+// mock browser for testing in browser (where browser won't be defined)
+if (typeof browser == 'undefined') {
+	IN_BROWSER_TAB = true;
+	const IS_LOGGED_IN = true;
+	browser = {}
+	browser.storage = {}
+	browser.storage.local = {}
+	browser.storage.local.get = async (key) => {
+		// todo -- check what is being gotten if we use localstorage for other stuff
+		if (IS_LOGGED_IN) {
+			return {
+				deviceId: 'foo',
+				secret: 'bar',
+				token: 'qux',
+				tokenExpiration: '2222-01-01'
+			}
+		}
+		return {}
+	}
+	browser.storage.local.set = async () => {}
+	browser.tabs = {}
+	browser.tabs.query = async () => {
+		return [{
+			id: 'baz'
+		}]
+	}
+	browser.tabs.sendMessage = async () => {
+		return 'http://localhost'
+	}
+}
+
+
 // gloabl helper object
 pwman.helpers = {
 	guessItemFromPage: async () => {
@@ -46,17 +82,22 @@ pwman.helpers = {
 		}
 	},
 	createDevice: async ({username, password}) => {
-		const respRaw = await fetch(SERVER_BASE_URI + '/devices', {
-			method: "POST",
-			body: JSON.stringify({
-				username,
-				password,
-				deviceDescription: {
-					userAgent: navigator.userAgent
-				}
-			}),
-			headers: {"Content-type": "application/json; charset=UTF-8"}
-		})
+		let respRaw;
+		try {
+			respRaw = await fetch(SERVER_BASE_URI + '/devices', {
+				method: "POST",
+				body: JSON.stringify({
+					username,
+					password,
+					deviceDescription: {
+						userAgent: navigator.userAgent
+					}
+				}),
+				headers: {"Content-type": "application/json; charset=UTF-8"}
+			})
+		} catch (e) {
+			throw new Error('Could not create device: ' + e.message)
+		}
 		return respRaw.json()
 	},
 	fetchToken: async ({deviceId, secret}) => {
@@ -74,5 +115,40 @@ pwman.helpers = {
 			token: tokenInfo.token,
 			tokenExpiration: tokenInfo.tokenExpiration,
 		})
+	},
+	fetchItems: async () => {
+		if (IN_BROWSER_TAB) {
+			// send mock items
+			console.log("WARNING USING MOCK ITEMS")
+			return [{
+				item: {
+					username: 'hello',
+					password: 'testpw',
+					website: 'http://localhost:8080'
+				},
+				id: 'foo'
+			}]
+		}
+		const [currentTab] = await browser.tabs.query({
+			currentWindow: true,
+			active: true
+		})
+		const url = await browser.tabs.sendMessage(
+			currentTab.id,
+			{
+				action: "fetch url"
+			}
+		)
+		const parsedURL = new URL(url)
+		const {origin} = parsedURL
+		const respRaw = await fetch(SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
+			method: "GET",
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				Authorization: "Bearer " + pwman.credentials.token
+			}
+		})
+		const parsedResp = await respRaw.json()
+		return parsedResp.items
 	}
 }

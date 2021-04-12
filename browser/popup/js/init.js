@@ -4,109 +4,14 @@
  * FIXME cypress tests mebbe
  */
 
-const SERVER_BASE_URI = 'http://localhost:3000'
-
-let IN_BROWSER_TAB = false
-// mock browser for testing in browser (where browser won't be defined)
-if (typeof browser == 'undefined') {
-	IN_BROWSER_TAB = true;
-	const IS_LOGGED_IN = true;
-	browser = {}
-	browser.storage = {}
-	browser.storage.local = {}
-	browser.storage.local.get = async (key) => {
-		// todo -- check what is being gotten if we use localstorage for other stuff
-		if (IS_LOGGED_IN) {
-			return {
-				deviceId: 'foo',
-				secret: 'bar',
-				token: 'qux',
-				tokenExpiration: '2222-01-01'
-			}
-		}
-		return {}
-	}
-	browser.storage.local.set = async () => {}
-	browser.tabs = {}
-	browser.tabs.query = async () => {
-		return [{
-			id: 'baz'
-		}]
-	}
-	browser.tabs.sendMessage = async () => {
-		return 'http://localhost'
-	}
-}
-
 /*
  * FIXME try/catch for http status/network errors?
  * FIXME: refactor for sane code organization
  */
 window.addEventListener('DOMContentLoaded', () => {
 	const screenEls = document.querySelectorAll('.screen')
-
-	const fetchItems = async () => {
-		if (IN_BROWSER_TAB) {
-			// send mock items
-			console.log("WARNING USING MOCK ITEMS")
-			return [{
-				item: {
-					username: 'hello',
-					password: 'testpw',
-					website: 'http://localhost:8080'
-				},
-				id: 'foo'
-			}]
-		}
-		const [currentTab] = await browser.tabs.query({
-			currentWindow: true,
-			active: true
-		})
-		const url = await browser.tabs.sendMessage(
-			currentTab.id,
-			{
-				action: "fetch url"
-			}
-		)
-		const parsedURL = new URL(url)
-		const {origin} = parsedURL
-		const respRaw = await fetch(SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
-			method: "GET",
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-				Authorization: "Bearer " + pwman.credentials.token
-			}
-		})
-		const parsedResp = await respRaw.json()
-		return parsedResp.items
-	}
-
-	const fillItemOnBrowserPage = async (item) => {
-		const [currentTab] = await browser.tabs.query({
-			currentWindow: true,
-			active: true
-		})
-		await browser.tabs.sendMessage(
-			currentTab.id,
-			{
-				action: "fill item",
-				item
-			}
-		)
-	}
-
+	
 	pwman.showScreen = async (id) => {
-		if (id == 'main-menu') {
-			let items;
-			try {
-				items = await fetchItems()
-			} catch (e) {
-				console.log("Could not fetch items: ", e)
-			}
-			if (items) {
-				renderItems(items)
-			}
-		}
 		for (let i = 0; i < screenEls.length; i++) {
 			if (screenEls[i].id == id) {
 				screenEls[i].classList.remove('hidden')
@@ -114,67 +19,18 @@ window.addEventListener('DOMContentLoaded', () => {
 				screenEls[i].classList.add('hidden')
 			}
 		}
-	}
-
-	function renderItems(items) {
-		const currentItemsULEL = document.querySelector('#main-menu .current-items')
-		currentItemsULEL.innerHTML = ''
-		var itemTemplate = document.querySelector('#item-row')
-		items.forEach(i => {
-			const liEl = itemTemplate.content.cloneNode(true)
-			liEl.querySelector(".website").textContent = i.item.website
-			liEl.querySelector(".username").textContent = i.item.username
-			liEl.querySelector("button.fill").addEventListener('click', (e) => {
-				e.preventDefault()
-				fillItemOnBrowserPage(i.item)
-			})
-			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
-				e.preventDefault()
-				await pwman.showScreen('edit-item')
-				document.querySelector('#edit-item .website').value = i.item.website
-				document.querySelector('#edit-item .username').value = i.item.username
-				document.querySelector('#edit-item .password').value = i.item.password
-				document.querySelector('#edit-item .item-id').value = i.id
-			})
-			currentItemsULEL.appendChild(liEl)
-		})
+		if (pwman.screens[id].show) {
+			pwman.screens[id].show();
+		}
 	}
 
 	/*
 	 * Set up all events
 	 */
 	pwman.screens.login.setup()
-	pwman.screens.mainMenu.setup()
-	// ADD ITEM
-	document.querySelector('#add-item form').addEventListener('submit', async (e) => {
-		e.preventDefault()
-		const username = document.querySelector('#add-item .username').value
-		const password = document.querySelector('#add-item .password').value
-		const website = document.querySelector('#add-item .website').value
-		await fetch(SERVER_BASE_URI + '/items', {
-			method: "POST",
-			body: JSON.stringify({
-				item: {
-					username,
-					password,
-					website,
-				},
-				deviceId: pwman.credentials.deviceId,
-				token: pwman.credentials.token
-			}),
-			headers: {
-				"Content-type": "application/json; charset=UTF-8",
-				Authorization: "Bearer " + pwman.credentials.token
-			}
-		})
-		await pwman.showScreen('main-menu')
-	})
-	document.querySelector('#add-item form .back').addEventListener('click', async (e) => {
-		e.preventDefault()
-		await pwman.showScreen('main-menu')
-	})
-	console.log('hello 2')
-	pwman.screens.editItem.setup()
+	pwman.screens['main-menu'].setup()
+	pwman.screens['add-item'].setup()
+	pwman.screens['edit-item'].setup()
 
 	// Startup
 	;(async () => {
