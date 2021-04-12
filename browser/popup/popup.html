@@ -14,7 +14,7 @@
 			</div>
 			<div class="input-group">
 				<label class="label-gray">password:</label>
-				<input class="password" type='password'/>
+				<input class="password" type="password"/>
 			</div>
 			<button type="submit">Login</button>
 			<div class="error hidden">No errors here</div>
@@ -32,26 +32,45 @@
 	</div>
 	<div id="add-item" class="hidden screen">
 		<form>
-			username:
-			<input type="text" class="username"/>
-			password:
-			<input type="text" class="password"/>
-			website:
-			<input type="text" class="website"/>
-			<button class="add-item">Add Item</button>
+			<h1 class="h1-title">New Item</h1>
+			<div class="input-group">
+				<label class="label-gray">website:</label>
+				<input class="website" type="text"/>
+			</div>
+			<div class="input-group">
+				<label class="label-gray">username:</label>
+				<input class="username"/>
+			</div>
+			<div class="input-group">
+				<label class="label-gray">password:</label>
+				<input class="password" type="text"/>
+			</div>
+			<div class="input-group">
+				<button class="back">Nevermind</button>
+				<button class="add-item">Add Item</button>
+			</div>
 		</form>
 	</div>
 	<div id="edit-item" class="hidden screen">
 		<form>
-			username:
-			<input type="text" class="username"/>
-			password:
-			<input type="text" class="password"/>
-			website:
-			<input type="text" class="website"/>
+			<h1 class="h1-title">Edit Item</h1>
+			<div class="input-group">
+				<label class="label-gray">website:</label>
+				<input class="website" type="text"/>
+			</div>
+			<div class="input-group">
+				<label class="label-gray">username:</label>
+				<input class="username"/>
+			</div>
+			<div class="input-group">
+				<label class="label-gray">password:</label>
+				<input class="password" type="text"/>
+			</div>
 			<input type="hidden" class="item-id"/>
-			<button class="add-item">Nevermind</button>
-			<button class="add-item">Save edits</button>
+			<div class="input-group">
+				<button class="back">Nevermind</button>
+				<button class="add-item">Add Item</button>
+			</div>
 		</form>
 	</div>
 

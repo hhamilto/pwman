@@ -309,6 +309,11 @@ window.addEventListener('DOMContentLoaded', () => {
 		})
 		await showScreen('main-menu')
 	})
+	document.querySelector('#add-item form .back').addEventListener('click', async (e) => {
+		e.preventDefault()
+		await showScreen('main-menu')
+	})
+
 	// EDIT ITEM
 	document.querySelector('#edit-item form').addEventListener('submit', async (e) => {
 		e.preventDefault()
@@ -330,6 +335,10 @@ window.addEventListener('DOMContentLoaded', () => {
 				Authorization: "Bearer " + token
 			}
 		})
+		await showScreen('main-menu')
+	})
+	document.querySelector('#edit-item form .back').addEventListener('click', async (e) => {
+		e.preventDefault()
 		await showScreen('main-menu')
 	})
 

@@ -23,17 +23,16 @@ body {
 	display: none;
 }
 
-#login .input-group {
+.input-group {
 	width: 100%;
 	margin-top: 1rem;
 }
 
-#login .input-group label {
+.input-group label {
 	display: block;
 }
 
-
-#login .input-group input {
+.input-group input {
 	margin-top: 2px;
 	width: 100%;
 }
@@ -52,10 +51,17 @@ body {
 }
 
 #main-menu .current-items {
-	clear: both;
 	margin-top: 1rem;
 	list-style: none;
 	padding: 0;
+}
+
+#main-menu .current-items li:first {
+	margin-top: 0;
+}
+
+#main-menu .current-items li{
+	margin-top: 1rem;
 }
 
 .clear-fix {
