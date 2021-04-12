@@ -41,7 +41,6 @@ if (typeof browser == 'undefined') {
 /*
  * FIXME try/catch for http status/network errors?
  * FIXME: refactor for sane code organization
-          hi level 
  */
 window.addEventListener('DOMContentLoaded', () => {
 	const screenEls = document.querySelectorAll('.screen')
@@ -145,24 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	 * Set up all events
 	 */
 	pwman.screens.login.setup()
-	// MAIN MENU
-	document.querySelector('#main-menu button.logout').addEventListener('click', async (e) => {
-		e.preventDefault()
-		await browser.storage.local.set({
-			deviceId: null,
-			secret: null,
-			token: null
-		})
-		pwman.credentials.deviceId = null
-		pwman.credentials.secret = null
-		pwman.credentials.token = null
-		await pwman.showScreen('login')
-	})
-	document.querySelector('#main-menu button.add-item').addEventListener('click', async (e) => {
-		e.preventDefault()
-		await pwman.showScreen('add-item')
-		await pwman.helpers.guessItemFromPage()
-	})
+	pwman.screens.mainMenu.setup()
 	// ADD ITEM
 	document.querySelector('#add-item form').addEventListener('submit', async (e) => {
 		e.preventDefault()

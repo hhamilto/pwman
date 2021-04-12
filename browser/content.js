@@ -36,9 +36,6 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 	} else if (message.action == 'fill item') {
-		console.log('wtg')
-		console.log('message', message)
-		// todo -- store selectors too?
 		let usernameEl
 		for (let i = 0; i < userNameSelectors.length; i++) {
 			usernameEl = document.querySelector(userNameSelectors[i])
@@ -57,16 +54,10 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 				break
 			}
 		}
-		console.log("passwordEl?")
 		if (passwordEl) {
 			passwordEl.value = message.item.password
 		}
 	} else {
 		console.log('unrecognized action', message)
 	}
-
-	/*
-	 * console.log("In content script, received message from background script: ");
-	 * console.log(m);
-	 */
 })

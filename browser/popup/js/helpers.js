@@ -1,4 +1,5 @@
-// init
+
+// todo: logger?
 pwman = {}
 pwman.screens = {}
 pwman.credentials = {
