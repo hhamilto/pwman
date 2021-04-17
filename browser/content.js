@@ -6,8 +6,8 @@ const userNameSelectors = [
 	'input[placeholder*="User ID" i]',
 	'input[id*="userid" i]',
 	'input[name="user_id" i]',
-	'input[name="userid" i]'
-	'input[id*="user" i]',
+	'input[name="userid" i]',
+	'input[id*="user" i]'
 ]
 
 const passwordSelectors = ['input[type="password"]']
