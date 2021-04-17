@@ -2,11 +2,6 @@ pwman.screens.login = {}
 pwman.screens.login.setup = () => {
 	document.querySelector('#login form').addEventListener('submit', async (e) => {
 		e.preventDefault()
-		const showError = (message) => {
-			const errorMessageEl = document.querySelector('#login .error')
-			errorMessageEl.classList.remove('hidden')
-			errorMessageEl.textContent = message
-		}
 		const username = document.querySelector('#login .username').value
 		const password = document.querySelector('#login .password').value
 		if (!pwman.credentials.deviceId || !pwman.credentials.secret) {
@@ -18,11 +13,11 @@ pwman.screens.login.setup = () => {
 				})
 			} catch (e) {
 				// TODO better message
-				showError('Could not create a device: ' + e.message)
+				pwman.screens.login.showError('Could not create a device: ' + e.message)
 				return
 			}
 			if (createDeviceResp.error) {
-				showError('Could not login: ' + createDeviceResp.error)
+				pwman.screens.login.showError('Could not login: ' + createDeviceResp.error)
 				return
 			}
 
@@ -43,9 +38,15 @@ pwman.screens.login.setup = () => {
 			})
 		} catch (e) {
 			// TODO better message
-			showError('Could not login: ' + e.message)
+			pwman.screens.login.showError('Could not login: ' + e.message)
 			return
 		}
 		await pwman.showScreen('main-menu')
 	})
+}
+
+pwman.screens.login.showError = (message) => {
+	const errorMessageEl = document.querySelector('#login .error')
+	errorMessageEl.classList.remove('hidden')
+	errorMessageEl.textContent = message
 }

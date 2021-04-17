@@ -51,10 +51,14 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		if (!pwman.credentials.token || !storedCredentials.tokenExpiration || pwman.credentials.tokenExpiration < luxon.DateTime.utc()) {
 			// warning mutates global state
-			await pwman.helpers.fetchToken({
-				deviceId: pwman.credentials.deviceId,
-				secret: pwman.credentials.secret
-			})
+			try {
+				await pwman.helpers.fetchToken({
+					deviceId: pwman.credentials.deviceId,
+					secret: pwman.credentials.secret
+				})
+			} catch (e) {
+				pwman.showScreen('login')
+			}
 		}
 
 		/*

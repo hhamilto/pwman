@@ -11,7 +11,7 @@ if (process.env.DEV_MODE_CORS) {
 	app.use(cors())
 } else {
 	app.use(cors({
-		origin: 'moz-extension://6be79846-ee33-44ca-a2d8-nope',
+		origin: /^moz-extension:\/\/.*$/,
 	}))
 }
 
@@ -32,4 +32,11 @@ app.post('/items', require('./routes/create-item.js'))
 app.get('/items', require('./routes/search-items.js'))
 app.put('/items/:itemId', require('./routes/edit-item.js'))
 
-app.listen(process.env.PORT || 3000)
+const port = process.env.PORT || 3000
+app.listen(port, (err) => {
+	if (err) {
+		logger.error("Could not listen on port " + port + ": " + err.message)
+		return
+	}
+	logger.info("listening on port " + port)
+})
