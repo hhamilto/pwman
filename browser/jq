@@ -1,7 +1,8 @@
 {
+
   "manifest_version": 2,
   "name": "hurricane password manager",
-  "version": "1.4",
+  "version": "1.2",
   "description": "lololol",
   "icons": {
     "200": "icon-dev.png"
@@ -19,12 +20,8 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*/*"
-      ],
-      "js": [
-        "content.js"
-      ]
+      "matches": ["*://*/*"],
+      "js": ["content.js"]
     }
   ],
   "background": {

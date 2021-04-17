@@ -1,1 +1,20 @@
 #! /bin/bash
+set -eo pipefail
+# save .bak file of manifest
+
+cd "$(dirname "$0")"/..
+
+VERSION=$(jq .version -r < manifest.json)
+MAJOR_VERSION=$(echo "$VERSION" | cut -f 1 -d .)
+MINOR_VERSION=$(echo "$VERSION" | cut -f 2 -d .)
+NEW_MINOR_VERSION=$(("$MINOR_VERSION" + 1))
+
+NEWLY_VERSIONED_MANIFEST=$(jq "( . + {version:\"$MAJOR_VERSION.$NEW_MINOR_VERSION\"})" < manifest.json)
+echo "$NEWLY_VERSIONED_MANIFEST" > manifest.json
+
+cp manifest.json .manifest.json.bak
+sed 's#icon-dev#icon#g' < .manifest.json.bak > manifest.json
+web-ext sign
+mv .manifest.json.bak manifest.json
+
+
