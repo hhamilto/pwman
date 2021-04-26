@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "hurricane password manager",
-  "version": "1.4",
+  "version": "1.5",
   "description": "lololol",
   "icons": {
     "200": "icon-dev.png"
@@ -24,7 +24,9 @@
       ],
       "js": [
         "content.js"
-      ]
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
     }
   ],
   "background": {

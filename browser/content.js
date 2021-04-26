@@ -7,6 +7,7 @@ const userNameSelectors = [
 	'input[id*="userid" i]',
 	'input[name="user_id" i]',
 	'input[name="userid" i]',
+	'input[name="login" i]',
 	'input[id*="user" i]'
 ]
 
@@ -46,7 +47,13 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 		if (usernameEl) {
+			usernameEl.focus();
 			usernameEl.value = message.item.username
+			usernameEl.click();
+			var evt = document.createEvent("HTMLEvents");
+		    evt.initEvent("change", false, true);
+		    usernameEl.dispatchEvent(evt);
+			usernameEl.blur();
 		}
 
 		let passwordEl
@@ -57,8 +64,17 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 		if (passwordEl) {
+			passwordEl.focus();
+			passwordEl.value = message.item.password
+			passwordEl.click();
+			var evt = document.createEvent("HTMLEvents");
+		    evt.initEvent("change", false, true);
+		    passwordEl.dispatchEvent(evt);
+			passwordEl.value = message.item.password
+			passwordEl.blur();
 			passwordEl.value = message.item.password
 		}
+		console.log("filled!5")
 	} else {
 		console.log('unrecognized action', message)
 	}
