@@ -47,13 +47,13 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 		if (usernameEl) {
-			usernameEl.focus();
+			usernameEl.focus()
 			usernameEl.value = message.item.username
-			usernameEl.click();
-			var evt = document.createEvent("HTMLEvents");
-		    evt.initEvent("change", false, true);
-		    usernameEl.dispatchEvent(evt);
-			usernameEl.blur();
+			usernameEl.click()
+			const evt = document.createEvent("HTMLEvents")
+			evt.initEvent("change", false, true)
+			usernameEl.dispatchEvent(evt)
+			usernameEl.blur()
 		}
 
 		let passwordEl
@@ -64,15 +64,13 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 		if (passwordEl) {
-			passwordEl.focus();
+			passwordEl.focus()
 			passwordEl.value = message.item.password
-			passwordEl.click();
-			var evt = document.createEvent("HTMLEvents");
-		    evt.initEvent("change", false, true);
-		    passwordEl.dispatchEvent(evt);
-			passwordEl.value = message.item.password
-			passwordEl.blur();
-			passwordEl.value = message.item.password
+			passwordEl.click()
+			const evt = document.createEvent("HTMLEvents")
+			evt.initEvent("change", false, true)
+			passwordEl.dispatchEvent(evt)
+			passwordEl.blur()
 		}
 		console.log("filled!5")
 	} else {
