@@ -51,16 +51,16 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			usernameEl.focus()
 			usernameEl.value = message.item.username
 			usernameEl.click()
-			let changeEvent = new Event('change', {
+			const changeEvent = new Event('change', {
 				bubbles: true,
 				cancelable: true,
-			});
-			usernameEl.dispatchEvent(changeEvent);
-			let inputEvent = new Event('input', {
+			})
+			usernameEl.dispatchEvent(changeEvent)
+			const inputEvent = new Event('input', {
 				bubbles: true,
 				cancelable: true,
-			});
-			usernameEl.dispatchEvent(inputEvent);
+			})
+			usernameEl.dispatchEvent(inputEvent)
 			usernameEl.blur()
 		}
 
@@ -75,16 +75,16 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			passwordEl.focus()
 			passwordEl.value = message.item.password
 			passwordEl.click()
-			let changeEvent = new Event('change', {
+			const changeEvent = new Event('change', {
 				bubbles: true,
 				cancelable: true,
-			});
-			passwordEl.dispatchEvent(changeEvent);
-			let inputEvent = new Event('input', {
+			})
+			passwordEl.dispatchEvent(changeEvent)
+			const inputEvent = new Event('input', {
 				bubbles: true,
 				cancelable: true,
-			});
-			passwordEl.dispatchEvent(inputEvent);
+			})
+			passwordEl.dispatchEvent(inputEvent)
 			passwordEl.blur()
 		}
 		console.log("filled!")

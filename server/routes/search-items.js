@@ -13,7 +13,7 @@ module.exports = (req, res) => {
 		  u.id = ? `
 	const params = [res.locals.user.id]
 	if (req.query.website) {
-		query += 'AND JSON_EXTRACT(s.item, "$.website") = ?'
+		query += `AND JSON_CONTAINS(s.item, JSON_QUOTE(?), '$.website') = 1`
 		params.push(req.query.website)
 	}
 	db.query(query, params, function (err, results) {
@@ -22,7 +22,6 @@ module.exports = (req, res) => {
 			return res.status(500).json({error: 'internal server error'})
 		}
 		try {
-
 			const items = results.map(row => {
 				return {
 					id: row.public_id,

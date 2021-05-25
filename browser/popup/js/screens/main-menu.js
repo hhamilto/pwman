@@ -41,16 +41,17 @@
 		var itemTemplate = document.querySelector('#item-row')
 		items.forEach(i => {
 			const liEl = itemTemplate.content.cloneNode(true)
-			liEl.querySelector(".website").textContent = i.item.website
+			liEl.querySelector(".website").textContent = i.item.website.join(', ')
 			liEl.querySelector(".username").textContent = i.item.username
 			liEl.querySelector("button.fill").addEventListener('click', (e) => {
 				e.preventDefault()
 				fillItemOnBrowserPage(i.item)
 			})
+			// TODO -- seems like this logic should live in the edit screen
 			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
 				e.preventDefault()
 				await pwman.showScreen('edit-item')
-				document.querySelector('#edit-item .website').value = i.item.website
+				document.querySelector('#edit-item .website').value = i.item.website.join(', ')
 				document.querySelector('#edit-item .username').value = i.item.username
 				document.querySelector('#edit-item .password').value = i.item.password
 				document.querySelector('#edit-item .item-id').value = i.id
