@@ -51,9 +51,16 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			usernameEl.focus()
 			usernameEl.value = message.item.username
 			usernameEl.click()
-			const evt = document.createEvent("HTMLEvents")
-			evt.initEvent("change", false, true)
-			usernameEl.dispatchEvent(evt)
+			let changeEvent = new Event('change', {
+				bubbles: true,
+				cancelable: true,
+			});
+			usernameEl.dispatchEvent(changeEvent);
+			let inputEvent = new Event('input', {
+				bubbles: true,
+				cancelable: true,
+			});
+			usernameEl.dispatchEvent(inputEvent);
 			usernameEl.blur()
 		}
 
@@ -68,12 +75,19 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			passwordEl.focus()
 			passwordEl.value = message.item.password
 			passwordEl.click()
-			const evt = document.createEvent("HTMLEvents")
-			evt.initEvent("change", false, true)
-			passwordEl.dispatchEvent(evt)
+			let changeEvent = new Event('change', {
+				bubbles: true,
+				cancelable: true,
+			});
+			passwordEl.dispatchEvent(changeEvent);
+			let inputEvent = new Event('input', {
+				bubbles: true,
+				cancelable: true,
+			});
+			passwordEl.dispatchEvent(inputEvent);
 			passwordEl.blur()
 		}
-		console.log("filled!5")
+		console.log("filled!")
 	} else {
 		console.log('unrecognized action', message)
 	}
