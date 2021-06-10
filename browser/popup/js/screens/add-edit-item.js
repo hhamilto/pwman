@@ -60,3 +60,10 @@ pwman.screens['edit-item'].setup = () => {
 		await pwman.showScreen('main-menu')
 	})
 }
+
+pwman.screens['edit-item'].show = (item) => {
+	document.querySelector('#edit-item .website').value = item.item.website.join(', ')
+	document.querySelector('#edit-item .username').value = item.item.username
+	document.querySelector('#edit-item .password').value = item.item.password
+	document.querySelector('#edit-item .item-id').value = item.id
+}

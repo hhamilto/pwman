@@ -16,7 +16,12 @@
 		document.querySelector('#main-menu button.add-item').addEventListener('click', async (e) => {
 			e.preventDefault()
 			await pwman.showScreen('add-item')
+			// TODO: Should this be in add-item?
 			await pwman.helpers.guessItemFromPage()
+		})
+		document.querySelector('#main-menu button.generate-password').addEventListener('click', async (e) => {
+			e.preventDefault()
+			await pwman.showScreen('generate-password')
 		})
 	}
 
@@ -47,14 +52,9 @@
 				e.preventDefault()
 				fillItemOnBrowserPage(i.item)
 			})
-			// TODO -- seems like this logic should live in the edit screen
 			liEl.querySelector("button.edit").addEventListener('click', async (e) => {
 				e.preventDefault()
-				await pwman.showScreen('edit-item')
-				document.querySelector('#edit-item .website').value = i.item.website.join(', ')
-				document.querySelector('#edit-item .username').value = i.item.username
-				document.querySelector('#edit-item .password').value = i.item.password
-				document.querySelector('#edit-item .item-id').value = i.id
+				await pwman.showScreen('edit-item', i)
 			})
 			currentItemsULEL.appendChild(liEl)
 		})

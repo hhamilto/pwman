@@ -28,11 +28,28 @@
 		</div>
 		<ul class="current-items">
 		</ul>
-		<button class="add-item">Add Item</button>
+		<button class="add-item">Add item</button>
+		<button class="generate-password">Generate password</button>
+	</div>
+	<div id="generate-password" class="hidden screen">
+		<form>
+			<div class="input-group">
+				<label class="label-gray">length:</label>
+				<input type="number" class="length"/>
+			</div>
+			<div class="input-group">
+				<label class="label-gray">password:</label>
+				<input readonly class="generated-password"/>
+			</div>
+			<div class="input-group">
+				<button class="generate-password">Generate password</button>
+				<button class="back">Back</button>
+			</div>
+		</form>
 	</div>
 	<div id="add-item" class="hidden screen">
 		<form>
-			<h1 class="h1-title">New Item</h1>
+			<h1 class="h1-title">New item</h1>
 			<div class="input-group">
 				<label class="label-gray">website:</label>
 				<input class="website" type="text"/>
@@ -47,13 +64,13 @@
 			</div>
 			<div class="input-group">
 				<button class="back">Nevermind</button>
-				<button class="add-item">Add Item</button>
+				<button class="add-item">Add item</button>
 			</div>
 		</form>
 	</div>
 	<div id="edit-item" class="hidden screen">
 		<form>
-			<h1 class="h1-title">Edit Item</h1>
+			<h1 class="h1-title">Edit item</h1>
 			<div class="input-group">
 				<label class="label-gray">website:</label>
 				<input class="website" type="text"/>
@@ -91,6 +108,7 @@
 	<script src="js/helpers.js"></script>
 	<script src="js/screens/add-edit-item.js"></script>
 	<script src="js/screens/login.js"></script>
+	<script src="js/screens/generate-password.js"></script>
 	<script src="js/screens/main-menu.js"></script>
 	<script src="js/init.js"></script>
 </body>

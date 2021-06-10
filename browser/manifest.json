@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "hurricane password manager",
-  "version": "1.7",
+  "version": "1.8",
   "description": "lololol",
   "icons": {
     "200": "icon-dev.png"
@@ -10,7 +10,8 @@
     "activeTab",
     "storage",
     "webRequest",
-    "*://localhost:3000/*"
+    "*://localhost:3000/*",
+    "clipboardWrite"
   ],
   "browser_action": {
     "default_icon": "icon-dev.png",

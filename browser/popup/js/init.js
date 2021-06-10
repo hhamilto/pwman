@@ -11,7 +11,7 @@
 window.addEventListener('DOMContentLoaded', () => {
 	const screenEls = document.querySelectorAll('.screen')
 
-	pwman.showScreen = (id) => {
+	pwman.showScreen = (id, ...rest) => {
 		for (let i = 0; i < screenEls.length; i++) {
 			if (screenEls[i].id == id) {
 				screenEls[i].classList.remove('hidden')
@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		if (pwman.screens[id].show) {
-			pwman.screens[id].show()
+			pwman.screens[id].show(...rest)
 		}
 	}
 
@@ -31,6 +31,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	pwman.screens['main-menu'].setup()
 	pwman.screens['add-item'].setup()
 	pwman.screens['edit-item'].setup()
+	pwman.screens['generate-password'].setup()
 
 	// Startup
 	;(async () => {
@@ -61,10 +62,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		/*
-		 * TODO session tokenExpiration/ renewal
-		 * is logged in
-		 */
 		await pwman.showScreen('main-menu')
 	})()
 })

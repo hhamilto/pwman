@@ -230,7 +230,7 @@ module.exports = {
         "prefer-template": "off",
         "quote-props": ["error", "as-needed"],
         "quotes": "off",
-        "radix": "error",
+        "radix": "off",
         "require-atomic-updates": "error",
         "require-await": "off",
         "require-unicode-regexp": "off",
