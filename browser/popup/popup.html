@@ -33,9 +33,25 @@
 	</div>
 	<div id="generate-password" class="hidden screen">
 		<form>
+			<div class="input-group checkbox">
+				<input type="checkbox" class="uppercase" id="generate-password-uppercase"/>
+				<label class="label-gray" for="generate-password-uppercase">Include UPPERCASE letters</label>
+			</div>
+			<div class="input-group checkbox">
+				<input type="checkbox" class="lowercase" id="generate-password-lowercase"/>
+				<label class="label-gray" for="generate-password-lowercase">Include lowercase letters</label>
+			</div>
+			<div class="input-group checkbox">
+				<input type="checkbox" class="numbers" id="generate-password-numbers"/>
+				<label class="label-gray" for="generate-password-numbers">Include numbers</label>
+			</div>
+			<div class="input-group checkbox">
+				<input type="checkbox" class="symbols" id="generate-password-symbols"/>
+				<label class="label-gray" for="generate-password-symbols">Include symbols (!@#... etc)</label>
+			</div>
 			<div class="input-group">
 				<label class="label-gray">length:</label>
-				<input type="number" class="length"/>
+				<input type="text" class="length"/>
 			</div>
 			<div class="input-group">
 				<label class="label-gray">password:</label>

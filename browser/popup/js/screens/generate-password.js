@@ -16,6 +16,35 @@ const NUMBERS = '1234567890'.split('')
 
 const SYMBOLS = '!@#$%^&*()_+{}:"<>?~`'.split('')
 
+
+/*
+const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
+	const deviceId = credentials.deviceId
+	const secret = credentials.secret
+	let tokenExpiration = luxon.DateTime.fromISO(credentials.tokenExpiration)
+	if (!deviceId || !secret) {
+		return
+	}
+	if (tokenExpiration > luxon.DateTime.utc().plus({minutes:1})) {
+		return
+	}
+	const tokenInfo = await fetchToken({
+		deviceId,
+		secret
+	})
+	tokenExpiration = tokenInfo.tokenExpiration
+	await browser.storage.local.set({
+		token: tokenInfo.token,
+		tokenExpiration: tokenInfo.tokenExpiration,
+	})
+	*/
+
+
+const lengthInputEl = document.querySelector('#generate-password form .length')
+const uppercaseInputEl = document.querySelector('#generate-password form .uppercase')
+const lowercaseInputEl = document.querySelector('#generate-password form .lowercase')
+const symbolsInputEl = document.querySelector('#generate-password form .symbols')
+const numbersInputEl = document.querySelector('#generate-password form .numbers')
 /*
  * TODO:
  * Remember length
@@ -23,18 +52,42 @@ const SYMBOLS = '!@#$%^&*()_+{}:"<>?~`'.split('')
  * add checkboxes for upperlower and symbols on/off
  */
 pwman.screens['generate-password'].setup = () => {
+	lengthInputEl.addEventListener('input', async (e) => {
+		const currentValue = lengthInputEl.value
+		const stripped = currentValue.replace(/[^0-9]/g,'')
+		lengthInputEl.value = stripped
+	})
+	document.querySelector('#generate-password form').addEventListener('change', async (e) => {
+		await browser.storage.local.set({
+			passwordGenerationOptions:{
+				length: lengthInputEl.value,
+				includeUppercase: uppercaseInputEl.checked,
+				includeLowercase: lowercaseInputEl.checked,
+				includeNumbers: numbersInputEl.checked,
+				includeSymbols: symbolsInputEl.checked,
+			}
+		})
+	});
 	document.querySelector('#generate-password form').addEventListener('submit', async (e) => {
 		e.preventDefault()
 		const symbolBank = []
-		symbolBank.push(...CAPITAL_LETTERS)
-		symbolBank.push(...LOWERCASE_LETTERS)
-		symbolBank.push(...NUMBERS)
-		symbolBank.push(...SYMBOLS)
-		const length = parseInt(document.querySelector('#generate-password .length').value)
+		if (uppercaseInputEl.checked) {
+			symbolBank.push(...CAPITAL_LETTERS)
+		}
+		if (lowercaseInputEl.checked) {
+			symbolBank.push(...LOWERCASE_LETTERS)
+		}
+		if (numbersInputEl.checked) {
+			symbolBank.push(...NUMBERS)
+		}
+		if (symbolsInputEl.checked) {
+			symbolBank.push(...SYMBOLS)
+		}
+		const length = parseInt(lengthInputEl.value)
 		if (isNaN(length)) {
 			// TODO: error handling
 			// eslint-disable-next-line
-			alert("nope!")
+			alert("unable to parse valid length!")
 		}
 		let password = ''
 		const MAX_UINT32_VAL = 4294967295
@@ -48,8 +101,17 @@ pwman.screens['generate-password'].setup = () => {
 		passwordEl.value = password
 		await navigator.clipboard.writeText(password)
 	})
-	document.querySelector('#add-item form .back').addEventListener('click', async (e) => {
+	document.querySelector('#generate-password form .back').addEventListener('click', async (e) => {
 		e.preventDefault()
 		await pwman.showScreen('main-menu')
 	})
+}
+
+pwman.screens['generate-password'].show = async () => {
+	const { passwordGenerationOptions } = await browser.storage.local.get('passwordGenerationOptions') || {}
+	lengthInputEl.value = passwordGenerationOptions.length || 10;
+	uppercaseInputEl.checked = passwordGenerationOptions.includeUppercase
+	lowercaseInputEl.checked = passwordGenerationOptions.includeLowercase
+	numbersInputEl.checked = passwordGenerationOptions.includeNumbers
+	symbolsInputEl.checked = passwordGenerationOptions.includeSymbols
 }

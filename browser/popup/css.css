@@ -37,6 +37,15 @@ body {
 	width: 100%;
 }
 
+.input-group.checkbox label {
+	display: inline;
+}
+
+.input-group.checkbox input {
+	margin-top: 0;
+	width: auto;
+}
+
 #login button {
 	margin-top: 1rem;
 }
