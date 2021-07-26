@@ -100,6 +100,7 @@ pwman.screens['generate-password'].setup = () => {
 		const passwordEl = document.querySelector('#generate-password .generated-password')
 		passwordEl.value = password
 		await navigator.clipboard.writeText(password)
+		// todo alert user that pw has been coppied to clipboard
 	})
 	document.querySelector('#generate-password form .back').addEventListener('click', async (e) => {
 		e.preventDefault()

@@ -9,6 +9,7 @@ const userNameSelectors = [
 	'input[name="userid" i]',
 	'input[name="login" i]',
 	'input[id*="user" i]',
+	'input[id*="username" i]',
 	'input[id*="usrname" i]'
 ]
 
@@ -40,14 +41,15 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 	} else if (message.action == 'fill item') {
-		let usernameEl
+		let usernameEls = []
 		for (let i = 0; i < userNameSelectors.length; i++) {
-			usernameEl = document.querySelector(userNameSelectors[i])
+			let usernameEl = document.querySelector(userNameSelectors[i])
 			if (usernameEl) {
-				break
+				usernameEls.push(usernameEl)
 			}
 		}
-		if (usernameEl) {
+		for (let i = 0; i < usernameEls.length; i++) {
+			let usernameEl = usernameEls[i]
 			usernameEl.focus()
 			usernameEl.value = message.item.username
 			usernameEl.click()
