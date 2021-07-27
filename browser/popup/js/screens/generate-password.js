@@ -16,48 +16,23 @@ const NUMBERS = '1234567890'.split('')
 
 const SYMBOLS = '!@#$%^&*()_+{}:"<>?~`'.split('')
 
-
-/*
-const credentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
-	const deviceId = credentials.deviceId
-	const secret = credentials.secret
-	let tokenExpiration = luxon.DateTime.fromISO(credentials.tokenExpiration)
-	if (!deviceId || !secret) {
-		return
-	}
-	if (tokenExpiration > luxon.DateTime.utc().plus({minutes:1})) {
-		return
-	}
-	const tokenInfo = await fetchToken({
-		deviceId,
-		secret
-	})
-	tokenExpiration = tokenInfo.tokenExpiration
-	await browser.storage.local.set({
-		token: tokenInfo.token,
-		tokenExpiration: tokenInfo.tokenExpiration,
-	})
-	*/
-
-
 const lengthInputEl = document.querySelector('#generate-password form .length')
 const uppercaseInputEl = document.querySelector('#generate-password form .uppercase')
 const lowercaseInputEl = document.querySelector('#generate-password form .lowercase')
 const symbolsInputEl = document.querySelector('#generate-password form .symbols')
 const numbersInputEl = document.querySelector('#generate-password form .numbers')
+
 /*
  * TODO:
- * Remember length
  * add dissallowed char list
- * add checkboxes for upperlower and symbols on/off
  */
 pwman.screens['generate-password'].setup = () => {
-	lengthInputEl.addEventListener('input', async (e) => {
+	lengthInputEl.addEventListener('input', async () => {
 		const currentValue = lengthInputEl.value
-		const stripped = currentValue.replace(/[^0-9]/g,'')
+		const stripped = currentValue.replace(/[^0-9]/g, '')
 		lengthInputEl.value = stripped
 	})
-	document.querySelector('#generate-password form').addEventListener('change', async (e) => {
+	document.querySelector('#generate-password form').addEventListener('change', async () => {
 		await browser.storage.local.set({
 			passwordGenerationOptions:{
 				length: lengthInputEl.value,
@@ -67,7 +42,7 @@ pwman.screens['generate-password'].setup = () => {
 				includeSymbols: symbolsInputEl.checked,
 			}
 		})
-	});
+	})
 	document.querySelector('#generate-password form').addEventListener('submit', async (e) => {
 		e.preventDefault()
 		const symbolBank = []
@@ -84,10 +59,11 @@ pwman.screens['generate-password'].setup = () => {
 			symbolBank.push(...SYMBOLS)
 		}
 		const length = parseInt(lengthInputEl.value)
-		if (isNaN(length)) {
+		if (isNaN(length) || length > 100) {
 			// TODO: error handling
 			// eslint-disable-next-line
-			alert("unable to parse valid length!")
+			pwman.screens['generate-password'].showError("Invalid password length")
+			return
 		}
 		let password = ''
 		const MAX_UINT32_VAL = 4294967295
@@ -100,7 +76,8 @@ pwman.screens['generate-password'].setup = () => {
 		const passwordEl = document.querySelector('#generate-password .generated-password')
 		passwordEl.value = password
 		await navigator.clipboard.writeText(password)
-		// todo alert user that pw has been coppied to clipboard
+		pwman.screens['generate-password'].showInfo("Coppied to clipboard!")
+
 	})
 	document.querySelector('#generate-password form .back').addEventListener('click', async (e) => {
 		e.preventDefault()
@@ -110,9 +87,33 @@ pwman.screens['generate-password'].setup = () => {
 
 pwman.screens['generate-password'].show = async () => {
 	const { passwordGenerationOptions } = await browser.storage.local.get('passwordGenerationOptions') || {}
-	lengthInputEl.value = passwordGenerationOptions.length || 10;
+	lengthInputEl.value = passwordGenerationOptions.length || 10
 	uppercaseInputEl.checked = passwordGenerationOptions.includeUppercase
 	lowercaseInputEl.checked = passwordGenerationOptions.includeLowercase
 	numbersInputEl.checked = passwordGenerationOptions.includeNumbers
 	symbolsInputEl.checked = passwordGenerationOptions.includeSymbols
+	pwman.screens['generate-password'].hideMessages()
+}
+
+// Could maybe move to utils?
+pwman.screens['generate-password'].hideMessages = () => {
+	const messageEls = document.querySelectorAll('#generate-password .message')
+	for (let i = 0; i < messageEls.length; i++) {
+		messageEls[i].classList.add('hidden')
+	}
+}
+
+pwman.screens['generate-password'].showMessage = (selectorClass, message) => {
+	pwman.screens['generate-password'].hideMessages()
+	const messageEl = document.querySelector('#generate-password .message.' + selectorClass)
+	messageEl.classList.remove('hidden')
+	messageEl.textContent = message
+}
+
+pwman.screens['generate-password'].showInfo = (message) => {
+	pwman.screens['generate-password'].showMessage('info', message)
+}
+
+pwman.screens['generate-password'].showError = (message) => {
+	pwman.screens['generate-password'].showMessage('error', message)
 }

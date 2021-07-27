@@ -50,9 +50,14 @@ body {
 	margin-top: 1rem;
 }
 
-#login .error {
+.message.error {
 	margin-top: 1rem;
 	color: #C00;
+}
+
+.message.info {
+	margin-top: 1rem;
+	color: #090;
 }
 
 #main-menu .logout {

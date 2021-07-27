@@ -41,15 +41,15 @@ browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 			}
 		}
 	} else if (message.action == 'fill item') {
-		let usernameEls = []
+		const usernameEls = []
 		for (let i = 0; i < userNameSelectors.length; i++) {
-			let usernameEl = document.querySelector(userNameSelectors[i])
+			const usernameEl = document.querySelector(userNameSelectors[i])
 			if (usernameEl) {
 				usernameEls.push(usernameEl)
 			}
 		}
 		for (let i = 0; i < usernameEls.length; i++) {
-			let usernameEl = usernameEls[i]
+			const usernameEl = usernameEls[i]
 			usernameEl.focus()
 			usernameEl.value = message.item.username
 			usernameEl.click()
