@@ -37,3 +37,23 @@ setInterval(async () => {
 		tokenExpiration: tokenInfo.tokenExpiration,
 	})
 }, TOKEN_EXPIRATION_MILLIS - 10 * MINUTE_MILLIS)
+
+
+browser.runtime.onMessage.addListener(async (message) => {
+	if (message.action == 'request fill') {
+		pwman.info('about to try to use helpers')
+		// TODO: move to common place maybe?
+		const storedCredentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
+		/* eslint-disable require-atomic-updates */
+		pwman.credentials.deviceId = storedCredentials.deviceId
+		pwman.credentials.secret = storedCredentials.secret
+		pwman.credentials.token = storedCredentials.token
+		pwman.credentials.tokenExpiration = luxon.DateTime.fromISO(storedCredentials.tokenExpiration)
+		const items = await window.pwman.helpers.fetchItemsForOrigin(message.origin)
+		pwman.log('returing item:', items)
+		return items
+	}
+	pwman.log('unrecognized message recv by background script')
+
+
+})

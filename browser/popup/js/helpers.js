@@ -18,10 +18,9 @@ pwman.constants = {
 	SERVER_BASE_URI: 'http://localhost:3000'
 }
 
-let IN_BROWSER_TAB = false
-// mock browser for testing in browser (where browser won't be defined)
-if (typeof browser == 'undefined') {
-	IN_BROWSER_TAB = true
+const IN_BROWSER_TAB = false
+// mock browser for testing in browser
+if (IN_BROWSER_TAB) {
 	const IS_LOGGED_IN = true
 	browser = {}
 	browser.storage = {}
@@ -41,11 +40,9 @@ if (typeof browser == 'undefined') {
 	browser.storage.local.set = async () => {}
 	browser.tabs = {}
 	browser.tabs.query = async () => {
-		return [
-{
+		return [{
 			id: 'baz'
-		}
-]
+		}]
 	}
 	browser.tabs.sendMessage = async () => {
 		return 'http://localhost'
@@ -152,6 +149,9 @@ pwman.helpers = {
 		)
 		const parsedURL = new URL(url)
 		const {origin} = parsedURL
+		return pwman.helpers.fetchItemsForOrigin(origin)
+	},
+	fetchItemsForOrigin: async (origin) => {
 		const respRaw = await fetch(pwman.constants.SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
 			method: "GET",
 			headers: {

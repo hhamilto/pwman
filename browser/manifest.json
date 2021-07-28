@@ -33,6 +33,7 @@
   "background": {
     "scripts": [
       "popup/vendor/luxon.js",
+      "popup/js/helpers.js",
       "background-script.js"
     ]
   }
