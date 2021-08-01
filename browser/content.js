@@ -106,6 +106,9 @@ const passwordSelectors = ['input[type="password"]']
 			action: 'request fill',
 			origin: window.location.origin
 		})
+		if (!items) {
+			return
+		}
 		for (let i = 0; i < items.length; i++) {
 			fillItem(items[i].item)
 		}
