@@ -15,8 +15,10 @@ const userNameSelectors = [
 
 const passwordSelectors = ['input[type="password"]']
 
+const AUTO_FILL_TIMEOUT_MS = 10 * 1000
+
 ;(() => {
-	const fillItem = (item) => {
+	const fillUsername = (username) => {
 		const usernameEls = []
 		for (let i = 0; i < userNameSelectors.length; i++) {
 			const usernameEl = document.querySelector(userNameSelectors[i])
@@ -27,7 +29,7 @@ const passwordSelectors = ['input[type="password"]']
 		for (let i = 0; i < usernameEls.length; i++) {
 			const usernameEl = usernameEls[i]
 			usernameEl.focus()
-			usernameEl.value = item.username
+			usernameEl.value = username
 			usernameEl.click()
 			const changeEvent = new Event('change', {
 				bubbles: true,
@@ -41,7 +43,11 @@ const passwordSelectors = ['input[type="password"]']
 			usernameEl.dispatchEvent(inputEvent)
 			usernameEl.blur()
 		}
+		// If we found any username elements, then we count as successful fill
+		return Boolean(usernameEls.length)
+	}
 
+	const fillPassword = (password) => {
 		let passwordEl
 		for (let i = 0; i < passwordSelectors.length; i++) {
 			passwordEl = document.querySelector(passwordSelectors[i])
@@ -51,7 +57,7 @@ const passwordSelectors = ['input[type="password"]']
 		}
 		if (passwordEl) {
 			passwordEl.focus()
-			passwordEl.value = item.password
+			passwordEl.value = password
 			passwordEl.click()
 			const changeEvent = new Event('change', {
 				bubbles: true,
@@ -65,7 +71,24 @@ const passwordSelectors = ['input[type="password"]']
 			passwordEl.dispatchEvent(inputEvent)
 			passwordEl.blur()
 		}
-		console.log("filled!")
+		// If we found a password element, then we count as successful fill
+		return Boolean(passwordEl)
+	}
+	const fillItem = (item) => {
+		let fillAttemptSucceeded = true
+		if (item.username) {
+			const filledUsername = fillUsername(item.username)
+			if (!filledUsername) {
+				fillAttemptSucceeded = false
+			}
+		}
+		if (item.password) {
+			const filledPassword = fillPassword(item.password)
+			if (!filledPassword) {
+				fillAttemptSucceeded = false
+			}
+		}
+		return fillAttemptSucceeded
 	}
 
 	browser.runtime.onMessage.addListener(function(message, sender, sendResponse) {
@@ -100,8 +123,7 @@ const passwordSelectors = ['input[type="password"]']
 		}
 	})
 
-
-	window.addEventListener('DOMContentLoaded', async () => {
+	const requestAutoFill = async () => {
 		const items = await browser.runtime.sendMessage({
 			action: 'request fill',
 			origin: window.location.origin
@@ -109,9 +131,18 @@ const passwordSelectors = ['input[type="password"]']
 		if (!items) {
 			return
 		}
-		for (let i = 0; i < items.length; i++) {
-			fillItem(items[i].item)
+		const autoFillStart = Date.now()
+		while (items.length > 0 && Date.now() < autoFillStart + AUTO_FILL_TIMEOUT_MS) {
+			for (let i = 0; i < items.length; i++) {
+				const gotFilled = fillItem(items[i].item)
+				if (gotFilled) {
+					// Note: If item was filled successfully, remove from array
+					items.splice(i, 1)
+				}
+			}
+			await new Promise(res => setTimeout(res, 500))
 		}
+	}
 
-	})
+	window.addEventListener('DOMContentLoaded', requestAutoFill)
 })()
