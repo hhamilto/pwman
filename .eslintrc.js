@@ -190,7 +190,7 @@ module.exports = {
         "no-unreachable-loop": "error",
         "no-unsafe-optional-chaining": "error",
         "no-unused-expressions": "error",
-        "no-use-before-define": ["error", { "functions": false }],
+        "no-use-before-define": "off",
         "no-useless-backreference": "error",
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
@@ -213,7 +213,7 @@ module.exports = {
             "error",
             "always"
         ],
-        "operator-linebreak": "error",
+        "operator-linebreak": ["error", "before"],
         "padded-blocks": "off",
         "padding-line-between-statements": "error",
         "prefer-arrow-callback": "off",

@@ -124,7 +124,7 @@ pwman.helpers = {
 			tokenExpiration: tokenInfo.tokenExpiration,
 		})
 	},
-	fetchItems: async () => {
+	fetchItemsForCurrentPage: async () => {
 		if (IN_BROWSER_TAB) {
 			// send mock items
 			pwman.log("WARNING USING MOCK ITEMS")
@@ -149,10 +149,15 @@ pwman.helpers = {
 		)
 		const parsedURL = new URL(url)
 		const {origin} = parsedURL
-		return pwman.helpers.fetchItemsForOrigin(origin)
+		return pwman.helpers.fetchItems({origin})
 	},
-	fetchItemsForOrigin: async (origin) => {
-		const respRaw = await fetch(pwman.constants.SERVER_BASE_URI + '/items?website=' + encodeURIComponent(origin), {
+	fetchItems: async ({origin, fuzzy = false}) => {
+		const url = pwman.constants.SERVER_BASE_URI
+			+ '/items?website='
+			+ encodeURIComponent(origin)
+			+ '&fuzzy='
+			+ encodeURIComponent(fuzzy)
+		const respRaw = await fetch(url, {
 			method: "GET",
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -161,5 +166,18 @@ pwman.helpers = {
 		})
 		const parsedResp = await respRaw.json()
 		return parsedResp.items
+	},
+	// TODO: Tests
+	debounce: (timeoutMs, fun) => {
+		let timeoutHandle
+		return (...args) => {
+			if (timeoutHandle) {
+				clearTimeout(timeoutHandle)
+			}
+			timeoutHandle = setTimeout(() => {
+				timeoutHandle = null
+				fun(...args)
+			}, timeoutMs)
+		}
 	}
 }

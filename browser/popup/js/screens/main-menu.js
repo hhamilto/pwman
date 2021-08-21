@@ -19,6 +19,28 @@
 			// TODO: Should this be in add-item?
 			await pwman.helpers.guessItemFromPage()
 		})
+		const searchInputEl = document.querySelector('#main-menu input.search')
+		// FIXME: Debounce
+		searchInputEl.addEventListener('input', pwman.helpers.debounce(100, async (e) => {
+			e.preventDefault()
+			let items
+			try {
+				const MIN_FUZZY_SEARCH_CHARS = 2
+				if (searchInputEl.value && searchInputEl.value.length >= MIN_FUZZY_SEARCH_CHARS) {
+					items = await pwman.helpers.fetchItems({
+						origin: searchInputEl.value,
+						fuzzy: true
+					})
+				} else {
+					items = await pwman.helpers.fetchItemsForCurrentPage()
+				}
+			} catch (e) {
+				pwman.log("Could not fetch items: ", e)
+			}
+			if (items) {
+				renderItems(items)
+			}
+		}))
 		document.querySelector('#main-menu button.generate-password').addEventListener('click', async (e) => {
 			e.preventDefault()
 			await pwman.showScreen('generate-password')
@@ -63,7 +85,7 @@
 	pwman.screens['main-menu'].show = async () => {
 		let items
 		try {
-			items = await pwman.helpers.fetchItems()
+			items = await pwman.helpers.fetchItemsForCurrentPage()
 		} catch (e) {
 			pwman.log("Could not fetch items: ", e)
 		}

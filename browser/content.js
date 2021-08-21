@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 // TODO ^ logger maybe?
 const userNameSelectors = [
-	'input[type="email" i]',
-	'input[placeholder*="email" i]',
 	'input[placeholder*="User ID" i]',
 	'input[id*="userid" i]',
 	'input[name="user_id" i]',
@@ -10,7 +8,10 @@ const userNameSelectors = [
 	'input[name="login" i]',
 	'input[id*="user" i]',
 	'input[id*="username" i]',
-	'input[id*="usrname" i]'
+	'input[name*="username" i]',
+	'input[id*="usrname" i]',
+	'input[placeholder*="email" i]',
+	'input[type="email" i]'
 ]
 
 const passwordSelectors = ['input[type="password"]']
@@ -97,7 +98,6 @@ const AUTO_FILL_TIMEOUT_MS = 10 * 1000
 		} else if (message.action == 'fetch username') {
 			for (let i = 0; i < userNameSelectors.length; i++) {
 				const els = document.querySelectorAll(userNameSelectors[i])
-				console.log(els)
 				for (let j = 0; j < els.length; j++) {
 					if (els[j].value) {
 						sendResponse(els[j].value)
@@ -108,7 +108,6 @@ const AUTO_FILL_TIMEOUT_MS = 10 * 1000
 		} else if (message.action == 'fetch password') {
 			for (let i = 0; i < passwordSelectors.length; i++) {
 				const els = document.querySelectorAll(passwordSelectors[i])
-				console.log(els)
 				for (let j = 0; j < els.length; j++) {
 					if (els[j].value) {
 						sendResponse(els[j].value)

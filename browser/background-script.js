@@ -41,7 +41,6 @@ setInterval(async () => {
 
 browser.runtime.onMessage.addListener(async (message) => {
 	if (message.action == 'request fill') {
-		pwman.log('about to try to use helpers')
 		// TODO: move to common place maybe?
 		const storedCredentials = await browser.storage.local.get(['deviceId', 'secret', 'token', 'tokenExpiration'])
 		/* eslint-disable require-atomic-updates */
